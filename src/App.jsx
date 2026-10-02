@@ -9,11 +9,16 @@ Muestra componentes, etc
 import { useState } from 'react';
 import ProductCard from './components/ProductCard';
 import { products } from './data/products';
+import CartSummary from './components/CartSummary'
 
 
 function App() {
+  // Estado principal del carrito. Los componentes hijos lo reciben por props,
+  // pero las modificaciones reales se hacen aquí mediante setCart.
   const [cart, setCart] = useState([]);
 
+  // Agrega un producto al carrito. Si ya existe, aumenta su cantidad
+  // creando un nuevo array para no mutar el estado anterior.
   function addToCart(productToAdd) {
     const existingProduct = cart.find(
       (item) => item.id === productToAdd.id
@@ -40,10 +45,33 @@ function App() {
 
   }
 
-  const cartTotal = cart.reduce(
-    (total, item) => total + item.precio * item.cantidad,
-    0
-  );
+  // Elimina completamente un producto del carrito usando filter,
+  // que devuelve un nuevo array sin modificar el original.
+  function removeFromCart(productId){
+    const updatedCart = cart.filter((item) => item.id !== productId);
+    setCart(updatedCart)
+  }
+
+  // Disminuye la cantidad de un producto. Si solo queda una unidad,
+  // reutiliza removeFromCart para eliminarlo del carrito.
+  function decreaseQuantity(productId) {
+    const productInCart = cart.find((item) => item.id === productId)
+
+    if (productInCart.cantidad === 1) {
+      removeFromCart(productId)
+      return
+    }
+
+    const updatedCart = cart.map((item) => 
+      item.id === productId
+        ? { ...item, cantidad: item.cantidad -1 }
+        : item
+    )
+
+    setCart(updatedCart)
+
+  }
+
 
   return (
     <main className="container py-4">
@@ -71,28 +99,11 @@ function App() {
         </div>
       </section>
 
-      <section className='mt-5'>
-        <h2>Carrito</h2>
-
-        {cart.length === 0 ? (
-          <p>El carrito está vacío</p>
-        ) : (
-          <>
-            <ul>
-
-              {cart.map((item) =>
-
-                <li key={item.id}>
-                  {item.nombre} x {item.cantidad} = ${item.precio * item.cantidad} CLP
-                </li>
-              )}
-            </ul>
-            <p className='fw-bold mt-3'>
-              Total: ${cartTotal} CLP
-            </p>
-          </>
-        )}
-      </section>
+      <CartSummary 
+        cart = {cart} 
+        onRemoveFromCart = {removeFromCart}
+        onDecreaseQuantity = {decreaseQuantity}
+      />
     </main>
   );
 }

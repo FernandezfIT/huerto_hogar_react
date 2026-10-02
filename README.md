@@ -1,17 +1,85 @@
-# React + Vite
+# Huerto Hogar React — EV2 FullStack II
 
-This template provides a minimal setup to get React working in Vite with HMR and some Oxlint rules.
+Proyecto frontend para la Evaluación Parcial 2 de Desarrollo FullStack II.
 
-Currently, two official plugins are available:
+El objetivo es migrar el ecommerce anterior de Huerto Hogar a una aplicación React con Vite, Bootstrap, componentes reutilizables, navegación, estado, datos simulados y pruebas unitarias.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+## Stack
 
-## React Compiler
+- React
+- Vite
+- Bootstrap / React-Bootstrap
+- Vitest
+- React Testing Library
+- jsdom
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+> Nota académica: la rúbrica menciona Jasmine/Karma, pero el docente recomendó usar Vitest. El equipo trabajará con Vitest y documentará esta decisión en el informe de testing.
 
-## Expanding the Oxlint configuration
+## Instalación
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and Oxlint's TypeScript related rules in your project.
-# huerto_hogar_react
+```bash
+npm install
+```
+
+## Ejecutar en desarrollo
+
+```bash
+npm run dev
+```
+
+## Ejecutar pruebas
+
+Modo interactivo/watch:
+
+```bash
+npm run test
+```
+
+Ejecución única recomendada antes de mergear:
+
+```bash
+npm run test -- --run
+```
+
+## Build de producción
+
+```bash
+npm run build
+```
+
+## Estructura actual
+
+```txt
+src/
+  components/       Componentes reutilizables
+  data/             Datos simulados de productos
+  test/             Configuración global de pruebas
+  App.jsx           Componente principal y estado global inicial
+  main.jsx          Punto de montaje de React
+
+docs/
+  PLAN_EV2.md          Plan general de la evaluación
+  BRANCH_WORKFLOW.md   Flujo de ramas y trabajo colaborativo
+  TESTING.md           Manual de pruebas con Vitest
+  TEAM_TODO.md         Reparto de trabajo por ramas
+```
+
+## Flujo de trabajo del equipo
+
+1. No trabajar directo sobre `main`.
+2. Crear una rama `develop` para integración.
+3. Crear ramas `feature/...` desde `develop`.
+4. Antes de pedir merge:
+   - correr `npm run test -- --run`;
+   - correr `npm run build`;
+   - revisar que el código esté comentado de forma clara cuando sea necesario.
+5. Integrar mediante Pull Request.
+
+Ver detalles en [`docs/BRANCH_WORKFLOW.md`](docs/BRANCH_WORKFLOW.md).
+
+## Documentos importantes
+
+- [`docs/PLAN_EV2.md`](docs/PLAN_EV2.md)
+- [`docs/TEAM_TODO.md`](docs/TEAM_TODO.md)
+- [`docs/TESTING.md`](docs/TESTING.md)
+- [`docs/BRANCH_WORKFLOW.md`](docs/BRANCH_WORKFLOW.md)
