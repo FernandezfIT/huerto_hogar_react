@@ -18,7 +18,7 @@ function CartPage({ onNavigate }) {
 
   return (
     <section className="py-4">
-      <h1 className="mb-4">Carrito de compras</h1>
+      <h2 className="h3 mb-4">Carrito de compras</h2>
 
       <CartSummary
         cart={items}

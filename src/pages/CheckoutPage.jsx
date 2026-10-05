@@ -58,11 +58,11 @@ function CheckoutPage({ onNavigate, onOrderCreated, onOrderFailed }) {
 
   return (
     <section className="py-4">
-      <h1 className="mb-4">Finalizar compra</h1>
+      <h2 className="h3 mb-4">Finalizar compra</h2>
 
       <div className="row g-4">
         <div className="col-12 col-lg-7">
-          <h2 className="h4 mb-3">Datos del cliente</h2>
+          <h3 className="h5 mb-3">Datos del cliente</h3>
 
           <Form noValidate onSubmit={handleSubmit}>
             {CAMPOS.map((campo) => (
@@ -102,7 +102,7 @@ function CheckoutPage({ onNavigate, onOrderCreated, onOrderFailed }) {
         </div>
 
         <div className="col-12 col-lg-5">
-          <h2 className="h4 mb-3">Resumen de tu compra</h2>
+          <h3 className="h5 mb-3">Resumen de tu compra</h3>
 
           <CartSummary
             cart={items}

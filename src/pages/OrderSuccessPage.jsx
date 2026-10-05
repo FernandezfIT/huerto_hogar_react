@@ -36,7 +36,7 @@ function OrderSuccessPage({ order, onNavigate }) {
       <Card className="mb-4">
         <Card.Body>
           <div className="d-flex justify-content-between align-items-center mb-3">
-            <h2 className="h5 mb-0">Resumen de la orden</h2>
+            <h3 className="h6 mb-0">Resumen de la orden</h3>
             <Badge bg="success">{order.id}</Badge>
           </div>
 
