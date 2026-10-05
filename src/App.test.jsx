@@ -33,7 +33,9 @@ test('flujo completo: home → catálogo → carrito → checkout → éxito', a
 
   expect(screen.getByRole('heading', { name: /carrito de compras/i })).toBeInTheDocument()
   expect(screen.getByText('Manzanas Fuji')).toBeInTheDocument()
-  expect(screen.getByText(/total a pagar/i)).toHaveTextContent('$1.200')
+  // El carrito cobra precioOferta cuando existe, asi que Manzanas Fuji
+  // (precio 1200, precioOferta 990) suma $990 y no $1.200.
+  expect(screen.getByText(/total a pagar/i)).toHaveTextContent('$990')
 
   // 4. Ir al checkout
   await user.click(screen.getByRole('button', { name: /ir al checkout/i }))
