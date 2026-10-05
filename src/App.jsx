@@ -7,7 +7,7 @@
 */
 
 import { useState } from "react"
-import { BrowserRouter, Navigate, Route, Routes, useNavigate } from "react-router-dom"
+import { BrowserRouter, Navigate, Route, Routes, useNavigate, useParams } from "react-router-dom"
 import { CartProvider } from './context/CartProvider'
 import MainLayout from './layouts/MainLayout'
 import CatalogPage from './pages/CatalogPage'
@@ -19,6 +19,18 @@ import OrderFailurePage from './pages/OrderFailurePage'
 import LoginPage from './pages/LoginPage'
 import RegisterPage from './pages/RegisterPage'
 import ProfilePage from './pages/ProfilePage'
+import ProductDetailPage from './pages/ProductDetailPage'
+
+/*
+  El id de la ficha viaja por props y no por useParams dentro de la página, para
+  poder montar ProductDetailPage en un test sin router. Este adaptador es el
+  único que conoce el parámetro de la ruta.
+*/
+function DetalleDeProducto() {
+  const { id } = useParams()
+
+  return <ProductDetailPage idDelProducto={id} />
+}
 
 function AppRoutes() {
 
@@ -56,6 +68,7 @@ function AppRoutes() {
       <Route element={<MainLayout />}>
         <Route index element={<HomePage />} />
         <Route path="catalogo" element={<CatalogPage />} />
+        <Route path="producto/:id" element={<DetalleDeProducto />} />
         <Route path="carrito" element={<CartPage onNavigate={navigateTo} />} />
         <Route path="login" element={<LoginPage />} />
         <Route path="registro" element={<RegisterPage />} />
