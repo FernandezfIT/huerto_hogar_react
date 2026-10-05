@@ -1,6 +1,6 @@
-import { render, screen } from '@testing-library/react'
+﻿import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import { MemoryRouter } from 'react-router-dom'
+import { MemoryRouter, Route, Routes } from 'react-router-dom'
 import { expect, test, vi } from 'vitest'
 import ProductCard from './ProductCard'
 
@@ -104,6 +104,34 @@ test('el nombre del producto enlaza a su ficha', () => {
         'href',
         '/producto/FR001'
     )
+})
+
+test('al pulsar el nombre se llega a la ficha del producto', async () => {
+    /*
+      El test anterior alcanza con revisar el href, pero no detects que la ruta
+      no exista: ProductCard apuntaba a /producto/:id y el catch-all de App.jsx
+      mandaba a Home en silencio. Este test sí monta la ruta real y comprueba
+      que se llegue a la ficha.
+    */
+    const user = userEvent.setup()
+
+    render(
+        <MemoryRouter initialEntries={['/catalogo']}>
+            <Routes>
+                <Route path="/catalogo" element={<ProductCard product={product} onAddToCart={vi.fn()} />} />
+                <Route
+                    path="/producto/:id"
+                    element={<h1>Ficha de {product.nombre}</h1>}
+                />
+            </Routes>
+        </MemoryRouter>
+    )
+
+    await user.click(screen.getByRole('link', { name: /Manzanas Fuji/i }))
+
+    expect(
+        screen.getByRole('heading', { name: /ficha de manzanas fuji/i })
+    ).toBeInTheDocument()
 })
 
 test('la imagen usa el alt del nombre del producto', () => {
