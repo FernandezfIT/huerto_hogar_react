@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300" width="400" height="300" role="img" aria-label="Plátanos Cavendish">
+  <rect width="400" height="300" fill="#F7F7F7"/>
+  <circle cx="200" cy="132" r="58" fill="#2E8B57" opacity="0.14"/>
+  <path d="M186 104c0-13 10-22 24-22s24 9 24 22c0 6-2 10-4 14l-14 26h-16l-14-26c-2-4-4-8-4-14z" fill="none" stroke="#2E8B57" stroke-width="3.5" stroke-linejoin="round"/>
+  <text x="200" y="140" text-anchor="middle" font-family="Georgia, serif" font-size="34" font-weight="700" fill="#2E8B57">PC</text>
+  <text x="200" y="228" text-anchor="middle" font-family="Verdana, sans-serif" font-size="17" font-weight="700" fill="#333333">Plátanos Cavendish</text>
+  <text x="200" y="251" text-anchor="middle" font-family="Verdana, sans-serif" font-size="12.5" fill="#666666">Frutas Frescas</text>
+  <text x="200" y="272" text-anchor="middle" font-family="Verdana, sans-serif" font-size="11" fill="#8B4513">imagen referencial</text>
+</svg>
