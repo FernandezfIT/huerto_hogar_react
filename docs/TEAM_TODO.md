@@ -90,16 +90,33 @@ src/App.jsx
   `aria-invalid` y `aria-describedby` (react-bootstrap solo agrega la clase
   `is-invalid`, no el atributo).
 
-### Pendientes que quedan para otras ramas
+### Estado de las otras ramas
 
-- **Rama 3:** navbar real, rutas con React Router y badge del carrito. Ya está
-  expuesta la cantidad total en `useCart().count`.
-- **Rama 4:** `README.md` está desactualizado. La sección "Estructura actual"
-  necesita agregar `pages/`, `utils/`, `hooks/` y `context/`, y la descripción
-  de `App.jsx` ya no dice "estado global inicial". También falta el documento
-  de cobertura con los tests de esta rama.
-- **Rama 1:** el bug de imágenes (`/images/*.jpg` en `products.js` contra
-  archivos `.jpeg` reales) sigue sin corregir, por ser de esa rama.
+Las ramas están apiladas: cada una nace del *tip* de la anterior, así que esta
+rama ya contiene todo el trabajo de la Rama 2 y de la Rama 3.
+
+- **Rama 3 — completada.** `AppNavbar`, `MainLayout`, Home, Login, Registro,
+  Perfil y React Router ya están integrados en `AppRoutes`. El badge del
+  carrito usa `useCart().count`.
+- **Rama 4 — completada.** Se integró `origin/develop` en esta rama, con lo
+  cual llegaron `COVERAGE.md`, `ERS_V2.md`, `PRESENTATION_CHECKLIST.md` y el
+  `README.md` corregido.
+- **Rama 1 — el bug de imágenes ya está corregido** en el commit `09ed172`:
+  las rutas pasaron de `.jpg` a `.jpeg`, que es la extensión real de los
+  archivos en `public/images`. Además ese commit agregó `precioOferta` a
+  Manzanas Fuji, por lo que el carrito ya cobra $990 y no $1.200.
+
+### Pendientes de coordinación entre ramas
+
+- **`COVERAGE.md` hay que actualizarlo con la Rama 1.** La tabla enumera los
+  13 archivos de test que existen hoy (131 tests). Cuando esta rama agregue sus
+  propios archivos de test de catálogo, hay que sumar las filas correspondientes
+  y corregir el total. Decide si lo actualiza quien cierre la Rama 1 o si
+  vuelve a la Rama 4.
+- **`main` y `develop` divergieron.** El PR #1 (carrito) se fusionó en `main`,
+  pero `BRANCH_WORKFLOW.md` indica que los PR deben apuntar a `develop`. Hoy
+  ninguno contiene al otro. El equipo debe definir cuál es la rama de
+  integración e igualar la otra.
 
 ## Rama 3: `feature/navigation-layout-public-pages`
 
