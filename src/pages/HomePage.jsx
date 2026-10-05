@@ -6,7 +6,7 @@ function HomePage() {
         <section className='py-4'>
             <Row className='align-items-center g-4'>
                 <Col xs={12} lg={6}>
-                    <p className='text-succes fw-semibold mb-2'> Fresco, local y natural</p>
+                    <p className='text-success fw-semibold mb-2'> Fresco, local y natural</p>
 
                     <h1 className='display-5 fw-bold mb-3'> Huerto Hogar</h1>
 
@@ -18,6 +18,10 @@ function HomePage() {
                     <div className='d-flex flex-wrap gap-2 mt-4'>
                         <Button as={Link} to="/catalogo" variant='success' size='lg'>
                             Ver Catálogo
+                        </Button>
+
+                        <Button as={Link} to="/ofertas" variant='warning' size='lg'>
+                            Ver ofertas
                         </Button>
 
                         <Button as={Link} to="/carrito" variant='outline-success' size='lg'>
