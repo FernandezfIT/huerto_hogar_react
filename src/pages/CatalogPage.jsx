@@ -7,7 +7,7 @@
 
 import { useState } from 'react'
 import { Button } from 'react-bootstrap'
-import { useNavigate } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import CategoryFilter from '../components/CategoryFilter'
 import ProductList from '../components/ProductList'
 import SearchBar from '../components/SearchBar'
@@ -58,7 +58,11 @@ function CatalogPage() {
                 }
             />
 
-            <div className="mt-4">
+            <div className="d-flex flex-wrap gap-2 mt-4">
+                <Button as={Link} to="/ofertas" variant="warning">
+                    Ver ofertas
+                </Button>
+
                 <Button variant="outline-primary" onClick={() => navigate('/carrito')}>
                     Ver carrito
                 </Button>

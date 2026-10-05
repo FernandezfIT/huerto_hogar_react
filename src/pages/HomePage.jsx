@@ -20,6 +20,10 @@ function HomePage() {
                             Ver Catálogo
                         </Button>
 
+                        <Button as={Link} to="/ofertas" variant='warning' size='lg'>
+                            Ver ofertas
+                        </Button>
+
                         <Button as={Link} to="/carrito" variant='outline-success' size='lg'>
                             Ver carrito
                         </Button>

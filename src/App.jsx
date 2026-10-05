@@ -11,6 +11,7 @@ import { BrowserRouter, Navigate, Route, Routes, useNavigate, useParams } from "
 import { CartProvider } from './context/CartProvider'
 import MainLayout from './layouts/MainLayout'
 import CatalogPage from './pages/CatalogPage'
+import OffersPage from './pages/OffersPage'
 import HomePage from './pages/HomePage'
 import CartPage from './pages/CartPage'
 import CheckoutPage from './pages/CheckoutPage'
@@ -68,6 +69,7 @@ function AppRoutes() {
       <Route element={<MainLayout />}>
         <Route index element={<HomePage />} />
         <Route path="catalogo" element={<CatalogPage />} />
+        <Route path="ofertas" element={<OffersPage />} />
         <Route path="producto/:id" element={<DetalleDeProducto />} />
         <Route path="carrito" element={<CartPage onNavigate={navigateTo} />} />
         <Route path="login" element={<LoginPage />} />
