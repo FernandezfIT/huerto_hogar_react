@@ -1,10 +1,9 @@
-
 /**
- * 
- * 
+ *
+ *
  * DATOS DE LOS PRODUCTOS
  * Se manejan acá para separarlos de los componentes
- * 
+ *
  */
 
 export const products = [
@@ -13,9 +12,10 @@ export const products = [
         nombre: "Manzanas Fuji",
         categoria: "Frutas Frescas",
         precio: 1200,
+        precioOferta: 990,
         unidad: "kilo",
         stock: 150,
-        imagen: "/images/manzanas.jpg",
+        imagen: "/images/manzanas.jpeg",
         descripcion:
             "Manzanas Fuji crujientes y dulces, cultivadas en el Valle del Maule.",
     },
@@ -26,7 +26,7 @@ export const products = [
         precio: 1000,
         unidad: "kilo",
         stock: 200,
-        imagen: "/images/naranjas.jpg",
+        imagen: "/images/naranjas.jpeg",
         descripcion:
             "Jugosas y ricas en vitamina C, ideales para zumos frescos y refrescantes.",
     },
@@ -37,8 +37,8 @@ export const products = [
         precio: 900,
         unidad: "kilo",
         stock: 100,
-        imagen: "/images/zanahorias.jpg",
+        imagen: "/images/zanahorias.jpeg",
         descripcion:
             "Zanahorias crujientes cultivadas sin pesticidas en la Región de O'Higgins.",
     },
-];     
+];
