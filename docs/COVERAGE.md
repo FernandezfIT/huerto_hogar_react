@@ -120,12 +120,3 @@
  Ambos comandos deben pasar sin errores.
 
  ```
-
-   Luego:
-
- ```bash
-   git add docs/COVERAGE.md
-   git commit -m "docs: agregar documento de cobertura de testing"
- ```
-
- 
