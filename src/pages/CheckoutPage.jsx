@@ -76,6 +76,10 @@ function CheckoutPage({ onNavigate, onOrderCreated, onOrderFailed }) {
                   onChange={handleChange}
                   placeholder={campo.placeholder}
                   isInvalid={Boolean(errores[campo.name])}
+                  // react-bootstrap solo agrega la clase is-invalid, así que el
+                  // atributo aria-invalid se declara para que el lector de
+                  // pantalla anuncie el campo con error.
+                  aria-invalid={Boolean(errores[campo.name])}
                   aria-describedby={errores[campo.name] ? `${campo.name}-error` : undefined}
                 />
 
