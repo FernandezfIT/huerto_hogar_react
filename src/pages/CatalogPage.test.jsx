@@ -63,3 +63,42 @@ test('el botón Ver carrito navega al carrito', async () => {
 
     expect(screen.getByRole('heading', { name: /pantalla del carrito/i })).toBeInTheDocument()
 })
+
+test('el filtro muestra los 7 productos antes de elegir categoría', () => {
+    renderCatalog()
+
+    expect(screen.getAllByRole('button', { name: /agregar.*al carrito/i })).toHaveLength(7)
+    /* El botón "Todas" no lleva contador: los contadores van por categoría. */
+    expect(screen.getByRole('button', { name: /^todas$/i })).toBeInTheDocument()
+})
+
+test('filtrar por categoría deja solo los productos de esa categoría', async () => {
+    const user = userEvent.setup()
+
+    renderCatalog()
+
+    await user.click(screen.getByRole('button', { name: /verduras orgánicas/i }))
+
+    /* 3 verduras y ningún producto más. */
+    expect(screen.getAllByRole('button', { name: /agregar.*al carrito/i })).toHaveLength(3)
+    expect(screen.getByRole('heading', { name: /zanahorias/i })).toBeInTheDocument()
+    expect(screen.getByRole('heading', { name: /espinacas/i })).toBeInTheDocument()
+    expect(screen.queryByRole('heading', { name: /manzanas/i })).not.toBeInTheDocument()
+})
+
+test('volver a Todas restaura los 7 productos', async () => {
+    const user = userEvent.setup()
+
+    renderCatalog()
+
+    await user.click(screen.getByRole('button', { name: /verduras orgánicas/i }))
+    await user.click(screen.getByRole('button', { name: /todas/i }))
+
+    expect(screen.getAllByRole('button', { name: /agregar.*al carrito/i })).toHaveLength(7)
+})
+
+test('el filtro no ofrece la categoría de lácteos porque quedó sin productos', () => {
+    renderCatalog()
+
+    expect(screen.queryByRole('button', { name: /lácteos/i })).not.toBeInTheDocument()
+})

@@ -37,6 +37,17 @@ export function getProductsByCategory(categoryName, source = products) {
     return source.filter((product) => product.categoria === categoryName)
 }
 
+/**
+ * Cuenta cuántos productos hay por categoría. Se usa para mostrar el número en
+ * los botones del filtro, así el usuario sabe qué va a ver antes de clickear.
+ */
+export function countByCategory(source = products) {
+    return source.reduce((counts, product) => {
+        counts[product.categoria] = (counts[product.categoria] ?? 0) + 1
+        return counts
+    }, {})
+}
+
 export function getOffers(source = products) {
     return source.filter((product) => product.precioOferta !== undefined)
 }

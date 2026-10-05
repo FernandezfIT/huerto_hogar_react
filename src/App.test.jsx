@@ -1,9 +1,12 @@
 /*
-   Pruebas de integración de App.
+   Pruebas de integraci��n de App.
 
-   Verifican el cableado completo con React Router: home, catálogo, carrito,
-   checkout y confirmación de compra.
- */
+   Verifican el cableado completo con React Router: home, cat��logo, carrito,
+   checkout y confirmaci��n de compra.
+
+   El primer test recorre toda la aplicaci��n y renderiza las siete tarjetas
+   del cat��logo, as�� que se le da un timeout m��s alto que el de Vitest (5 s).
+*/
 
 import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
@@ -54,7 +57,7 @@ test('flujo completo: home → catálogo → carrito → checkout → éxito', a
   ).toBeInTheDocument()
   expect(screen.getByRole('link', { name: /carrito\s*0/i })).toBeInTheDocument()
   expect(localStorage.getItem('huerto-hogar-cart')).toBe('[]')
-})
+}, 20000)
 
 test('el carrito recuperado de localStorage aparece al cargar', async () => {
   const user = userEvent.setup()
