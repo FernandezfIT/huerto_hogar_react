@@ -34,6 +34,10 @@ function AppNavbar() {
                             Registro
                         </Nav.Link>
 
+                        <Nav.Link as={NavLink} to="/perfil">
+                            Perfil
+                        </Nav.Link>
+
 
                     </Nav>
                 </Navbar.Collapse>
