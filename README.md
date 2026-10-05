@@ -51,17 +51,25 @@ npm run build
 
 ```txt
 src/
-  components/       Componentes reutilizables
+  components/       Componentes reutilizables: tarjetas, navbar, resumen de carrito
+  context/          Contexto y provider del carrito
   data/             Datos simulados de productos
+  hooks/            Hooks propios, como useCart
+  layouts/          Layout principal con navbar, contenido y footer
+  pages/            Vistas de catálogo, carrito, checkout y páginas públicas
   test/             Configuración global de pruebas
-  App.jsx           Componente principal y estado global inicial
+  utils/            Funciones puras: cálculos, validaciones, storage y checkout
+  App.jsx           Enrutamiento principal con React Router
   main.jsx          Punto de montaje de React
 
 docs/
-  PLAN_EV2.md          Plan general de la evaluación
-  BRANCH_WORKFLOW.md   Flujo de ramas y trabajo colaborativo
-  TESTING.md           Manual de pruebas con Vitest
-  TEAM_TODO.md         Reparto de trabajo por ramas
+  PLAN_EV2.md              Plan general de la evaluación
+  BRANCH_WORKFLOW.md       Flujo de ramas y trabajo colaborativo
+  TESTING.md               Manual de pruebas con Vitest
+  TEAM_TODO.md             Reparto de trabajo por ramas
+  COVERAGE.md              Documento de cobertura de testing
+  ERS_V2.md                Especificación de requisitos actualizada
+  PRESENTATION_CHECKLIST.md Checklist para presentación y defensa
 ```
 
 ## Flujo de trabajo del equipo
