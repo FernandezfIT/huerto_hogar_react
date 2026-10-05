@@ -1,16 +1,14 @@
+# Checklist de presentación — Huerto Hogar React EV2
 
- ```md
-   # Checklist de presentación — Huerto Hogar React EV2
+## 1. Antes de presentar
 
-   ## 1. Antes de presentar
+Ejecutar y confirmar:
 
-   Ejecutar y confirmar:
-
-   ```bash
-   npm install
-   npm run test -- --run
-   npm run build
-   npm run dev
+```bash
+npm install
+npm run test -- --run
+npm run build
+npm run dev
  ```
 
  Verificar:
@@ -102,4 +100,3 @@
  - No hay despacho real.
  - El catálogo usa datos simulados.
  - Las pruebas no son end-to-end en navegador real.
- ```

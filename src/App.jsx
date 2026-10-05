@@ -2,8 +2,14 @@
   App.jsx define la estructura principal de la app.
 
   El estado del carrito ya no vive acá: lo administra CartProvider a través
-  de useCart. App solo compone el encabezado, la navegación y la vista activa.
+  de useCart. App solo compone el layout, las rutas y el estado de la orden
+  que viaja entre checkout y las páginas de resultado.
 
+  La navegación usa React Router con <Routes>. Todas las páginas cuelgan de
+  MainLayout, que aporta navbar y footer.
+
+  Nota: la nota que decía que App navegaba con un estado `vista` quedó vieja;
+  el router ya está integrado desde la Rama 3.
 */
 
 import { useState } from "react"
