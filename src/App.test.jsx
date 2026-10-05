@@ -23,7 +23,7 @@ test('flujo completo: home → catálogo → carrito → checkout → éxito', a
   await user.click(screen.getByRole('link', { name: /catálogo/i }))
 
   // 2. Catálogo: se agrega el primer producto
-  await user.click(screen.getAllByRole('button', { name: /agregar al carrito/i })[0])
+  await user.click(screen.getAllByRole('button', { name: /agregar.*al carrito/i })[0])
 
   expect(screen.getByRole('link', { name: /carrito\s*1/i })).toBeInTheDocument()
   expect(localStorage.getItem('huerto-hogar-cart')).toContain('FR001')
@@ -62,7 +62,7 @@ test('el carrito recuperado de localStorage aparece al cargar', async () => {
   // Primera visita: se navega al catálogo y se agrega un producto.
   const { unmount } = render(<App />)
   await user.click(screen.getByRole('link', { name: /catálogo/i }))
-  await user.click(screen.getAllByRole('button', { name: /agregar al carrito/i })[0])
+  await user.click(screen.getAllByRole('button', { name: /agregar.*al carrito/i })[0])
   unmount()
 
   // Segunda visita: el carrito sigue ahí.

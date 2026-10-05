@@ -7,47 +7,18 @@
 */
 
 import { useState } from "react"
-import { Button } from "react-bootstrap"
 import { BrowserRouter, Navigate, Route, Routes, useNavigate } from "react-router-dom"
 import { CartProvider } from './context/CartProvider'
-import { useCart } from "./hooks/useCart"
 import MainLayout from './layouts/MainLayout'
-import ProductCard from './components/ProductCard'
+import CatalogPage from './pages/CatalogPage'
 import HomePage from './pages/HomePage'
 import CartPage from './pages/CartPage'
 import CheckoutPage from './pages/CheckoutPage'
 import OrderSuccessPage from './pages/OrderSuccessPage'
 import OrderFailurePage from './pages/OrderFailurePage'
-import { products } from './data/products'
 import LoginPage from './pages/LoginPage'
 import RegisterPage from './pages/RegisterPage'
 import ProfilePage from './pages/ProfilePage'
-
-// Catalogo: lista productos y agrega al carrito usando contextp
-function Catalogo() {
-  const { addItem } = useCart()
-  const navigate = useNavigate()
-
-  return (
-    <section className="py-4">
-      <h1 className="h3 mb-4"> Catálogo de productos </h1>
-
-      <div className="row g-4">
-        {products.map((product) => (
-          <div className="col-12 col-md-6 col-lg-4" key={product.id}>
-            <ProductCard product={product} onAddToCart={addItem}></ProductCard>
-          </div>
-        ))}
-      </div>
-
-      <div className="mt-4">
-        <Button variant="outline-primary" onClick={() => navigate('/carrito')}>
-          Ver carrito
-        </Button>
-      </div>
-    </section>
-  )
-}
 
 function AppRoutes() {
 
@@ -84,7 +55,7 @@ function AppRoutes() {
     <Routes>
       <Route element={<MainLayout />}>
         <Route index element={<HomePage />} />
-        <Route path="catalogo" element={<Catalogo />} />
+        <Route path="catalogo" element={<CatalogPage />} />
         <Route path="carrito" element={<CartPage onNavigate={navigateTo} />} />
         <Route path="login" element={<LoginPage />} />
         <Route path="registro" element={<RegisterPage />} />
