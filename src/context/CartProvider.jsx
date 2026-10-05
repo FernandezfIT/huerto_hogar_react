@@ -12,9 +12,6 @@ import { CartContext } from './cartContext'
 import { getCartCount, getCartTotal, getMaxQuantity } from '../utils/cartCalculations'
 import { loadCart, saveCart } from '../utils/cartStorage'
 
-// El estado inicial viene de localStorage para no perder el carrito al recargar.
-const initialState = { items: loadCart() }
-
 function cartReducer(state, action) {
   switch (action.type) {
     case 'ADD_ITEM': {
@@ -87,7 +84,14 @@ function cartReducer(state, action) {
 }
 
 export function CartProvider({ children }) {
-  const [state, dispatch] = useReducer(cartReducer, initialState)
+  /*
+    El estado inicial se lee de localStorage al montar el provider, y no al
+    importar el módulo: así cada montaje recupera el carrito que había
+    guardado y un segundo provider no arranca con datos de otro momento.
+  */
+  const [state, dispatch] = useReducer(cartReducer, null, () => ({
+    items: loadCart(),
+  }))
 
   /*
     Guardar un carrito vacío equivale a limpiar el almacenamiento, así que
