@@ -5,7 +5,7 @@ import { Link } from "react-router-dom"
 function LoginPage(){
     return(
         <section className="py-4">
-            <Cart className="mx-auto shadow-sm" style={{maxWidth: '28rem'}}>
+            <Card className="mx-auto shadow-sm" style={{maxWidth: '28rem'}}>
                 <Card.Body>
                     <h1 className="h3 mb-3">Iniciar sesión</h1>
 
@@ -33,7 +33,7 @@ function LoginPage(){
                         ¿No tiens cuenta? <Link to = "/registro">Crear Cuenta</Link>
                     </p>
                 </Card.Body>
-            </Cart>
+            </Card>
         </section>
     )
 }

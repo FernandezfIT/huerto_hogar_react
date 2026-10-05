@@ -19,6 +19,8 @@ import CheckoutPage from './pages/CheckoutPage'
 import OrderSuccessPage from './pages/OrderSuccessPage'
 import OrderFailurePage from './pages/OrderFailurePage'
 import { products } from './data/products'
+import LoginPage from './pages/LoginPage'
+import RegisterPage from './pages/RegisterPage'
 
 // Catalogo: lista productos y agrega al carrito usando contextp
 function Catalogo() {
@@ -59,6 +61,8 @@ function AppRoutes() {
       checkout: '/checkout',
       exito: '/compra-exitosa',
       falla: '/compra-fallida',
+      login: '/login',
+      registro: '/registro'
     }
 
     navigate(rutas[vista] ?? '/')
@@ -80,6 +84,8 @@ function AppRoutes() {
         <Route index element={<HomePage />} />
         <Route path="catalogo" element={<Catalogo />} />
         <Route path="carrito" element={<CartPage onNavigate={navigateTo} />} />
+        <Route path="login" element={<LoginPage />} />
+        <Route path="registro" element={<RegisterPage />} />
         <Route
           path="checkout"
           element={
@@ -104,11 +110,11 @@ function AppRoutes() {
   )
 }
 
-function App(){
-  return(
+function App() {
+  return (
     <BrowserRouter>
       <CartProvider>
-        <AppRoutes/>
+        <AppRoutes />
       </CartProvider>
     </BrowserRouter>
   )

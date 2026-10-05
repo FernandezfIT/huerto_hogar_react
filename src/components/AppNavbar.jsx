@@ -23,8 +23,17 @@ function AppNavbar() {
                             Catálogo
                         </Nav.Link>
                         <Nav.Link as={NavLink} to="/carrito">
-                            Carrito <Badge bg = "success">{count}</Badge>
+                            Carrito <Badge bg="success">{count}</Badge>
                         </Nav.Link>
+
+                        <Nav.Link as={NavLink} to="/login">
+                            Login
+                        </Nav.Link>
+
+                        <Nav.Link as={NavLink} to="/registro">
+                            Registro
+                        </Nav.Link>
+
 
                     </Nav>
                 </Navbar.Collapse>
