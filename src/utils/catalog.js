@@ -51,3 +51,44 @@ export function countByCategory(source = products) {
 export function getOffers(source = products) {
     return source.filter((product) => product.precioOferta !== undefined)
 }
+
+/**
+ * Normaliza el texto de búsqueda: minúsculas y sin tildes.
+ *
+ * Sin esto "pimienta" no encontraría "Pimienta" y "verdura" no encontraría
+ * "Verduras". Usa normalize('NFD') para separar la tilde de la letra y luego
+ * descarta los diacríticos, en vez de tener una lista de reemplazos a mano.
+ *
+ * También colapsa los espacios internos: si el usuario escribe "miel  organica"
+ * con dos espacios, tiene que encontrar "Miel Orgánica" igual.
+ */
+export function normalizeText(text) {
+    return text
+        .toLowerCase()
+        .normalize('NFD')
+        .replace(/[\u0300-\u036f]/g, '')
+        .replace(/\s+/g, ' ')
+        .trim()
+}
+
+/**
+ * Busca productos por nombre. Con texto vacío devuelve la lista completa,
+ * para que el catálogo arranque mostrando todo.
+ */
+export function searchProducts(query, source = products) {
+    const term = normalizeText(query ?? '')
+
+    if (term === '') {
+        return source
+    }
+
+    return source.filter((product) => normalizeText(product.nombre).includes(term))
+}
+
+/**
+ * Aplica categoría y búsqueda a la vez. Es el orden correcto: primero se acota
+ * por categoría y después se busca dentro de lo que quedó.
+ */
+export function filterProducts({ categoria = null, query = '' } = {}, source = products) {
+    return searchProducts(query, getProductsByCategory(categoria, source))
+}

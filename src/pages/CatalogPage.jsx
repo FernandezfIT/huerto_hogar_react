@@ -10,27 +10,36 @@ import { Button } from 'react-bootstrap'
 import { useNavigate } from 'react-router-dom'
 import CategoryFilter from '../components/CategoryFilter'
 import ProductList from '../components/ProductList'
+import SearchBar from '../components/SearchBar'
 import { products } from '../data/products'
 import { useCart } from '../hooks/useCart'
 import {
     categoriesWithProducts,
     countByCategory,
-    getProductsByCategory,
+    filterProducts,
 } from '../utils/catalog'
 
 function CatalogPage() {
     const { addItem } = useCart()
     const navigate = useNavigate()
 
-    /* null significa "sin filtro": se muestran todas las categorías. */
+    /* null significa "sin filtro de categoría". */
     const [categoria, setCategoria] = useState(null)
+    const [busqueda, setBusqueda] = useState('')
 
     const categorias = categoriesWithProducts(products)
-    const productos = getProductsByCategory(categoria, products)
+    const productos = filterProducts({ categoria, query: busqueda }, products)
 
     return (
         <section className="py-4">
             <h1 className="h3 mb-4">Catálogo de productos</h1>
+
+            <SearchBar
+                query={busqueda}
+                onChange={setBusqueda}
+                onClear={() => setBusqueda('')}
+                resultCount={productos.length}
+            />
 
             <CategoryFilter
                 categories={categorias}
@@ -42,7 +51,11 @@ function CatalogPage() {
             <ProductList
                 items={productos}
                 onAddToCart={addItem}
-                emptyMessage="No hay productos en esta categoría."
+                emptyMessage={
+                    busqueda.trim() === ''
+                        ? 'No hay productos en esta categoría.'
+                        : `No encontramos productos para "${busqueda.trim()}".`
+                }
             />
 
             <div className="mt-4">

@@ -102,3 +102,77 @@ test('el filtro no ofrece la categoría de lácteos porque quedó sin productos'
 
     expect(screen.queryByRole('button', { name: /lácteos/i })).not.toBeInTheDocument()
 })
+
+/* --- búsqueda --- */
+
+test('buscar por nombre deja solo el producto que coincide', async () => {
+    const user = userEvent.setup()
+
+    renderCatalog()
+
+    await user.type(screen.getByLabelText(/buscar productos/i), 'miel')
+
+    expect(screen.getAllByRole('button', { name: /agregar.*al carrito/i })).toHaveLength(1)
+    expect(screen.getByRole('heading', { name: /miel orgánica/i })).toBeInTheDocument()
+})
+
+test('buscar ignora mayúsculas y tildes', async () => {
+    const user = userEvent.setup()
+
+    renderCatalog()
+
+    /* "PLATANO" tiene que encontrar "Plátanos Cavendish". */
+    await user.type(screen.getByLabelText(/buscar productos/i), 'PLATANO')
+
+    expect(screen.getByRole('heading', { name: /plátanos/i })).toBeInTheDocument()
+    expect(screen.queryByRole('heading', { name: /miel/i })).not.toBeInTheDocument()
+})
+
+test('la búsqueda se combina con el filtro de categoría', async () => {
+    const user = userEvent.setup()
+
+    renderCatalog()
+
+    await user.click(screen.getByRole('button', { name: /verduras orgánicas/i }))
+    await user.type(screen.getByLabelText(/buscar productos/i), 'espinacas')
+
+    expect(screen.getAllByRole('button', { name: /agregar.*al carrito/i })).toHaveLength(1)
+    expect(screen.getByRole('heading', { name: /espinacas/i })).toBeInTheDocument()
+})
+
+test('sin coincidencias avisa con un mensaje y no rompe la vista', async () => {
+    const user = userEvent.setup()
+
+    renderCatalog()
+
+    await user.type(screen.getByLabelText(/buscar productos/i), 'zzzz')
+
+    expect(
+        screen.getByText(/no encontramos productos para "zzzz"/i)
+    ).toBeInTheDocument()
+
+    /* Con cero resultados no hay ningún botón, y queryAllByRole no falla. */
+    expect(screen.queryAllByRole('button', { name: /agregar.*al carrito/i })).toHaveLength(0)
+})
+
+test('el contador de resultados anuncia cuántos son', async () => {
+    const user = userEvent.setup()
+
+    renderCatalog()
+
+    await user.type(screen.getByLabelText(/buscar productos/i), 'miel')
+
+    expect(screen.getByRole('status')).toHaveTextContent('1 producto encontrado.')
+})
+
+test('el botón Limpiar restaura el catálogo completo', async () => {
+    const user = userEvent.setup()
+
+    renderCatalog()
+
+    await user.type(screen.getByLabelText(/buscar productos/i), 'miel')
+    await user.click(screen.getByRole('button', { name: /limpiar/i }))
+
+    expect(screen.getByLabelText(/buscar productos/i)).toHaveValue('')
+    expect(screen.getAllByRole('button', { name: /agregar.*al carrito/i })).toHaveLength(7)
+})
