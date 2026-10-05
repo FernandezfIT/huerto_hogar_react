@@ -1,7 +1,6 @@
-import { Badge, Container, Nav, Bar } from react - bootstrap
+import { Badge, Container, Nav, Navbar } from 'react-bootstrap'
 import { NavLink } from 'react-router-dom'
 import { useCart } from '../hooks/useCart'
-import { Navbar } from 'react-bootstrap'
 
 function AppNavbar() {
     const { count } = useCart()
@@ -17,13 +16,13 @@ function AppNavbar() {
 
                 <Navbar.Collapse id="main-navbar">
                     <Nav className="ms-auto">
-                        <Nav.Link as="{NavLink}" to="/">
+                        <Nav.Link as={NavLink} to="/">
                             Inicio
                         </Nav.Link>
-                        <Nav.Link as="{NavLink}" to="/catalogo">
+                        <Nav.Link as={NavLink} to="/catalogo">
                             Catálogo
                         </Nav.Link>
-                        <Nav.Link as="{NavLink}" to="/carrito">
+                        <Nav.Link as={NavLink} to="/carrito">
                             Carrito <Badge bg = "success">{count}</Badge>
                         </Nav.Link>
 

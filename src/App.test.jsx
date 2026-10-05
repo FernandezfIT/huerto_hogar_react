@@ -1,10 +1,9 @@
 /*
-  Pruebas de integración de App.
+   Pruebas de integración de App.
 
-  Verifican el cableado completo: agregar desde el catálogo, navegar al
-  carrito, pasar por el checkout y confirmar la compra. Son las únicas
-  pruebas que comprueban que las páginas están conectadas entre sí.
-*/
+   Verifican el cableado completo con React Router: home, catálogo, carrito,
+   checkout y confirmación de compra.
+ */
 
 import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
@@ -13,31 +12,35 @@ import App from './App'
 
 beforeEach(() => {
   localStorage.clear()
+  window.history.pushState({}, '', '/')
 })
 
-test('flujo completo: catálogo → carrito → checkout → éxito', async () => {
+test('flujo completo: home → catálogo → carrito → checkout → éxito', async () => {
   const user = userEvent.setup()
   render(<App />)
 
-  // 1. Catálogo: se agrega el primer producto
+  // 1. Home: navegar al catálogo
+  await user.click(screen.getByRole('link', { name: /catálogo/i }))
+
+  // 2. Catálogo: se agrega el primer producto
   await user.click(screen.getAllByRole('button', { name: /agregar al carrito/i })[0])
 
-  expect(screen.getByRole('button', { name: /carrito \(1\)/i })).toBeInTheDocument()
+  expect(screen.getByRole('link', { name: /carrito\s*1/i })).toBeInTheDocument()
   expect(localStorage.getItem('huerto-hogar-cart')).toContain('FR001')
 
-  // 2. Navegar al carrito
-  await user.click(screen.getByRole('button', { name: /carrito \(1\)/i }))
+  // 3. Navegar al carrito
+  await user.click(screen.getByRole('link', { name: /carrito\s*1/i }))
 
   expect(screen.getByRole('heading', { name: /carrito de compras/i })).toBeInTheDocument()
   expect(screen.getByText('Manzanas Fuji')).toBeInTheDocument()
   expect(screen.getByText(/total a pagar/i)).toHaveTextContent('$1.200')
 
-  // 3. Ir al checkout
+  // 4. Ir al checkout
   await user.click(screen.getByRole('button', { name: /ir al checkout/i }))
 
   expect(screen.getByRole('heading', { name: /finalizar compra/i })).toBeInTheDocument()
 
-  // 4. Completar y confirmar
+  // 5. Completar y confirmar
   await user.type(screen.getByLabelText(/nombre completo/i), 'Ana Lopez')
   await user.type(screen.getByLabelText(/correo electrónico/i), 'ana.lopez@duoc.cl')
   await user.type(screen.getByLabelText(/teléfono/i), '+56912345678')
@@ -47,19 +50,21 @@ test('flujo completo: catálogo → carrito → checkout → éxito', async () =
   expect(
     screen.getByRole('heading', { name: /compra realizada con éxito/i }),
   ).toBeInTheDocument()
-  expect(screen.getByRole('button', { name: /carrito \(0\)/i })).toBeInTheDocument()
+  expect(screen.getByRole('link', { name: /carrito\s*0/i })).toBeInTheDocument()
   expect(localStorage.getItem('huerto-hogar-cart')).toBe('[]')
 })
 
 test('el carrito recuperado de localStorage aparece al cargar', async () => {
   const user = userEvent.setup()
 
-  // Primera visita: se agrega un producto.
+  // Primera visita: se navega al catálogo y se agrega un producto.
   const { unmount } = render(<App />)
+  await user.click(screen.getByRole('link', { name: /catálogo/i }))
   await user.click(screen.getAllByRole('button', { name: /agregar al carrito/i })[0])
   unmount()
 
   // Segunda visita: el carrito sigue ahí.
+  window.history.pushState({}, '', '/')
   render(<App />)
-  expect(screen.getByRole('button', { name: /carrito \(1\)/i })).toBeInTheDocument()
+  expect(screen.getByRole('link', { name: /carrito\s*1/i })).toBeInTheDocument()
 })
