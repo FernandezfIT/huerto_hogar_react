@@ -5,39 +5,99 @@
  * 
  */
 
+import { useState } from 'react'
+import { Badge, Button, Card } from 'react-bootstrap'
+import { Link } from 'react-router-dom'
+import { formatCurrency } from '../utils/formatCurrency'
+import { discountPercent, priceForDisplay } from '../utils/catalog'
+
 function ProductCard({ product, onAddToCart }) {
+    const [imagenRota, setImagenRota] = useState(false)
+
+    const enOferta = product.precioOferta !== undefined
+    const descuento = discountPercent(product)
+
     return (
-        <article className="card h-100">
-            <img
-                src={product.imagen}
-                className="card-img-top"
-                alt={product.nombre}
-            />
+        <Card className="h-100">
+            {enOferta && (
+                <Badge bg="warning" text="dark" className="position-absolute m-2">
+                    -{descuento}%
+                </Badge>
+            )}
 
-            <div className="card-body">
-                <h2 className="h5 card-title">
-                    {product.id} - {product.nombre}
-                </h2>
+            {imagenRota ? (
+                <div
+                    className="card-img-top d-flex align-items-center justify-content-center"
+                    style={{ height: '180px', backgroundColor: '#F7F7F7' }}
+                >
+                    <span className="text-secondary">Sin imagen</span>
+                </div>
+            ) : (
+                <Card.Img
+                    variant="top"
+                    src={product.imagen}
+                    alt={product.nombre}
+                    style={{ height: '180px', objectFit: 'cover' }}
+                    onError={() => setImagenRota(true)}
+                />
+            )}
 
-                <p className="card-text">{product.descripcion}</p>
+            <Card.Body>
+                <Card.Text className="text-secondary small mb-1">
+                    {product.id} · {product.categoria}
+                </Card.Text>
 
-                <p className="mb-1">
-                    <strong>Precio:</strong> ${product.precio} CLP por {product.unidad}
-                </p>
+                <Card.Title as="h2" className="h5">
+                    <Link
+                        to={`/producto/${product.id}`}
+                        className="text-decoration-none text-dark"
+                    >
+                        {product.nombre}
+                    </Link>
+                </Card.Title>
 
-                <p className="mb-3">
+                <Card.Text className="small">{product.descripcion}</Card.Text>
+
+                <Card.Text className="small mb-1">
+                    <strong>Origen:</strong> {product.origen}
+                </Card.Text>
+
+                <Card.Text className="mb-1">
+                    {enOferta ? (
+                        <>
+                            <strong>Precio oferta:</strong>{' '}
+                            <span className="text-success fw-bold">
+                                {formatCurrency(priceForDisplay(product))}
+                            </span>{' '}
+                            <span className="text-decoration-line-through text-secondary small">
+                                {formatCurrency(product.precio)}
+                            </span>
+                        </>
+                    ) : (
+                        <>
+                            <strong>Precio:</strong>{' '}
+                            <span className="fw-bold">
+                                {formatCurrency(priceForDisplay(product))}
+                            </span>
+                        </>
+                    )}{' '}
+                    <span className="small">por {product.unidad}</span>
+                </Card.Text>
+
+                <Card.Text className="mb-3">
                     <strong>Stock:</strong> {product.stock}
-                </p>
+                </Card.Text>
 
-                <button 
-                    className="btn btn-success"
+                <Button
+                    variant="success"
                     onClick={() => onAddToCart(product)}
+                    aria-label={`Agregar ${product.nombre} al carrito`}
                 >
                     Agregar al carrito
-                </button>
-            </div>
-        </article>
+                </Button>
+            </Card.Body>
+        </Card>
     );
 }
 
-export default ProductCard;  
+export default ProductCard;

@@ -2,60 +2,64 @@
   App.jsx define la estructura principal de la app.
 
   El estado del carrito ya no vive acá: lo administra CartProvider a través
-  de useCart. App solo compone el encabezado, la navegación y la vista activa.
+  de useCart. App solo compone el layout, las rutas y el estado de la orden
+  que viaja entre checkout y las páginas de resultado.
 
-  IMPORTANTE PARA EL EQUIPO:
-  La navegación usa un estado `vista` porque la Rama 3 todavía no integró
-  React Router. Cuando eso ocurra, se eliminan el estado `vista`, la constante
-  VISTAS y los botones del <nav>, y se reemplaza cada bloque condicional por
-  su <Route>. El resto de la app ya está preparada: las páginas solo reciben
-  onNavigate, así que el cambio queda acotado a este archivo.
+  La navegación usa React Router con <Routes>. Todas las páginas cuelgan de
+  MainLayout, que aporta navbar y footer.
+
+  Nota: la nota que decía que App navegaba con un estado `vista` quedó vieja;
+  el router ya está integrado desde la Rama 3.
 */
 
-import { useState } from 'react'
-import { Button } from 'react-bootstrap'
+import { useState } from "react"
+import { BrowserRouter, Navigate, Route, Routes, useNavigate, useParams } from "react-router-dom"
 import { CartProvider } from './context/CartProvider'
-import { useCart } from './hooks/useCart'
-import ProductCard from './components/ProductCard'
+import MainLayout from './layouts/MainLayout'
+import CatalogPage from './pages/CatalogPage'
+import CategoriesPage from './pages/CategoriesPage'
+import OffersPage from './pages/OffersPage'
+import HomePage from './pages/HomePage'
 import CartPage from './pages/CartPage'
 import CheckoutPage from './pages/CheckoutPage'
 import OrderSuccessPage from './pages/OrderSuccessPage'
 import OrderFailurePage from './pages/OrderFailurePage'
-import { products } from './data/products'
+import LoginPage from './pages/LoginPage'
+import RegisterPage from './pages/RegisterPage'
+import ProfilePage from './pages/ProfilePage'
+import ProductDetailPage from './pages/ProductDetailPage'
 
-const VISTA_CATALOGO = 'catalogo'
+/*
+  El id de la ficha viaja por props y no por useParams dentro de la página, para
+  poder montar ProductDetailPage en un test sin router. Este adaptador es el
+  único que conoce el parámetro de la ruta.
+*/
+function DetalleDeProducto() {
+  const { id } = useParams()
 
-// Catálogo: la lista de productos y el alta desde cada tarjeta.
-function Catalogo({ onNavigate }) {
-  const { addItem } = useCart()
-
-  return (
-    <section>
-      <h2 className="h4 mb-3">Catálogo de productos</h2>
-
-      <div className="row g-4">
-        {products.map((product) => (
-          <div className="col-12 col-md-6 col-lg-4" key={product.id}>
-            <ProductCard product={product} onAddToCart={addItem} />
-          </div>
-        ))}
-      </div>
-
-      <div className="mt-4">
-        <Button variant="outline-primary" onClick={() => onNavigate('carrito')}>
-          Ver carrito
-        </Button>
-      </div>
-    </section>
-  )
+  return <ProductDetailPage idDelProducto={id} />
 }
 
-// Tienda envuelve todo lo que necesita el carrito, por eso va dentro del provider.
-function Tienda() {
-  const { count } = useCart()
-  const [vista, setVista] = useState(VISTA_CATALOGO)
+function AppRoutes() {
+
+  const navigate = useNavigate()
   const [orden, setOrden] = useState(null)
   const [errorOrden, setErrorOrden] = useState(null)
+
+  function navigateTo(vista) {
+    const rutas = {
+      catalogo: '/catalogo',
+      carrito: '/carrito',
+      checkout: '/checkout',
+      exito: '/compra-exitosa',
+      falla: '/compra-fallida',
+      login: '/login',
+      registro: '/registro',
+      perfil: '/perfil'
+    }
+
+    navigate(rutas[vista] ?? '/')
+  }
 
   function handleOrderCreated(nuevaOrden) {
     setOrden(nuevaOrden)
@@ -68,51 +72,53 @@ function Tienda() {
   }
 
   return (
-    <main className="container py-4">
-      <header className="mb-4">
-        <div className="d-flex flex-wrap justify-content-between align-items-center gap-3">
-          <div>
-            <h1 className="mb-1">Huerto Hogar</h1>
-            <p className="lead mb-0">E-commerce de productos frescos y naturales.</p>
-          </div>
-
-          <nav className="d-flex gap-2" aria-label="Navegación principal">
-            <Button variant="link" onClick={() => setVista(VISTA_CATALOGO)}>
-              Catálogo
-            </Button>
-
-            <Button variant="outline-primary" onClick={() => setVista('carrito')}>
-              Carrito ({count})
-            </Button>
-          </nav>
-        </div>
-      </header>
-
-      {vista === VISTA_CATALOGO && <Catalogo onNavigate={setVista} />}
-
-      {vista === 'carrito' && <CartPage onNavigate={setVista} />}
-
-      {vista === 'checkout' && (
-        <CheckoutPage
-          onNavigate={setVista}
-          onOrderCreated={handleOrderCreated}
-          onOrderFailed={handleOrderFailed}
+    <Routes>
+      <Route element={<MainLayout />}>
+        <Route index element={<HomePage />} />
+        <Route path="catalogo" element={<CatalogPage />} />
+        <Route path="categorias" element={<CategoriesPage />} />
+        <Route path="ofertas" element={<OffersPage />} />
+        <Route path="producto/:id" element={<DetalleDeProducto />} />
+        <Route path="carrito" element={<CartPage onNavigate={navigateTo} />} />
+        <Route path="login" element={<LoginPage />} />
+        <Route path="registro" element={<RegisterPage />} />
+        <Route path="perfil" element={<ProfilePage />} />
+        <Route
+          path="checkout"
+          element={
+            <CheckoutPage
+              onNavigate={navigateTo}
+              onOrderCreated={handleOrderCreated}
+              onOrderFailed={handleOrderFailed}
+            />
+          }
         />
-      )}
-
-      {vista === 'exito' && <OrderSuccessPage order={orden} onNavigate={setVista} />}
-
-      {vista === 'falla' && <OrderFailurePage error={errorOrden} onNavigate={setVista} />}
-    </main>
+        <Route
+          path="compra-exitosa"
+          element={<OrderSuccessPage order={orden} onNavigate={navigateTo} />}
+        />
+        <Route
+          path="compra-fallida"
+          element={<OrderFailurePage error={errorOrden} onNavigate={navigateTo} />}
+        />
+        <Route path="*" element={<Navigate to="/" replace />} />
+      </Route>
+    </Routes>
   )
 }
 
 function App() {
   return (
-    <CartProvider>
-      <Tienda />
-    </CartProvider>
+    <BrowserRouter>
+      <CartProvider>
+        <AppRoutes />
+      </CartProvider>
+    </BrowserRouter>
   )
 }
 
 export default App
+
+
+
+
