@@ -6,14 +6,16 @@ import { CartProvider } from '../context/CartProvider'
 import { products } from '../data/products'
 import CatalogPage from './CatalogPage'
 
-function renderCatalog() {
+function renderCatalog(rutaInicial = '/catalogo') {
     return render(
-        <MemoryRouter initialEntries={['/catalogo']}>
+        <MemoryRouter initialEntries={[rutaInicial]}>
             <CartProvider>
                 <Routes>
                     <Route path="/catalogo" element={<CatalogPage />} />
                     {/* Marcador para comprobar que la navegación ocurrió. */}
                     <Route path="/carrito" element={<h1>Pantalla del carrito</h1>} />
+                    <Route path="/ofertas" element={<h1>Pantalla de ofertas</h1>} />
+                    <Route path="/categorias" element={<h1>Pantalla de categorías</h1>} />
                 </Routes>
             </CartProvider>
         </MemoryRouter>
@@ -175,4 +177,51 @@ test('el botón Limpiar restaura el catálogo completo', async () => {
 
     expect(screen.getByLabelText(/buscar productos/i)).toHaveValue('')
     expect(screen.getAllByRole('button', { name: /agregar.*al carrito/i })).toHaveLength(7)
+})
+
+/* --- filtros en la URL --- */
+
+test('abre filtrado si la URL trae una categoría', () => {
+    /* Es lo que hace CategoriesPage al linkear a una categoría. */
+    renderCatalog('/catalogo?categoria=Verduras%20Org%C3%A1nicas')
+
+    expect(screen.getAllByRole('button', { name: /agregar.*al carrito/i })).toHaveLength(3)
+    expect(screen.queryByRole('heading', { name: /manzanas/i })).not.toBeInTheDocument()
+})
+
+test('abre con la búsqueda de la URL si viene el parámetro q', () => {
+    renderCatalog('/catalogo?q=miel')
+
+    expect(screen.getByLabelText(/buscar productos/i)).toHaveValue('miel')
+    expect(screen.getAllByRole('button', { name: /agregar.*al carrito/i })).toHaveLength(1)
+})
+
+test('ignora una categoría desconocida que llegue en la URL', () => {
+    /* Con state local esto no podría pasar; con URL hay que tolerar basura. */
+    renderCatalog('/catalogo?categoria=Categoria%20Inventada')
+
+    expect(screen.queryAllByRole('button', { name: /agregar.*al carrito/i })).toHaveLength(0)
+    expect(screen.getByText(/no hay productos en esta categoría/i)).toBeInTheDocument()
+})
+
+test('el botón de categorías lleva a la vista de categorías', async () => {
+    const user = userEvent.setup()
+
+    renderCatalog()
+
+    /* React-Bootstrap le pone role="button" al <a> que renderiza Button as={Link},
+       así que el rol accesible es button y no link. */
+    await user.click(screen.getByRole('button', { name: /ver categorías/i }))
+
+    expect(screen.getByRole('heading', { name: /pantalla de categorías/i })).toBeInTheDocument()
+})
+
+test('el botón de ofertas lleva a la vista de ofertas', async () => {
+    const user = userEvent.setup()
+
+    renderCatalog()
+
+    await user.click(screen.getByRole('button', { name: /ver ofertas/i }))
+
+    expect(screen.getByRole('heading', { name: /pantalla de ofertas/i })).toBeInTheDocument()
 })
