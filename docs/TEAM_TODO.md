@@ -36,26 +36,70 @@ Objetivo: completar carrito y flujo de compra.
 
 Tareas:
 
-- [ ] Revisar y mejorar `CartSummary`.
-- [ ] Crear vista completa de carrito.
-- [ ] Persistir carrito con `localStorage`.
-- [ ] Crear formulario de checkout.
-- [ ] Validar datos del cliente.
-- [ ] Crear resumen de compra.
-- [ ] Crear vista compra exitosa.
-- [ ] Crear vista compra fallida.
-- [ ] Agregar tests de carrito, checkout y validaciones.
+- [x] Revisar y mejorar `CartSummary`.
+- [x] Crear vista completa de carrito.
+- [x] Persistir carrito con `localStorage`.
+- [x] Crear formulario de checkout.
+- [x] Validar datos del cliente.
+- [x] Crear resumen de compra.
+- [x] Crear vista compra exitosa.
+- [x] Crear vista compra fallida.
+- [x] Agregar tests de carrito, checkout y validaciones.
 
-Archivos probables:
+Archivos creados:
 
 ```txt
-src/components/CartSummary.jsx
+src/utils/formatCurrency.js
+src/utils/cartCalculations.js
+src/utils/cartStorage.js
+src/utils/validators.js
+src/utils/checkoutService.js
+src/hooks/useCart.js
+src/context/cartContext.js
+src/context/CartProvider.jsx
 src/pages/CartPage.jsx
 src/pages/CheckoutPage.jsx
 src/pages/OrderSuccessPage.jsx
 src/pages/OrderFailurePage.jsx
-src/utils/cartStorage.js
+src/test/cartFixtures.js
 ```
+
+Archivos modificados:
+
+```txt
+src/components/CartSummary.jsx
+src/App.jsx
+```
+
+### Decisiones que el equipo debe conocer
+
+- **El estado del carrito ya no está en `App.jsx`.** Vive en el reducer de
+  `src/context/CartProvider.jsx` y se consume con `useCart()`. Si otra rama
+  necesita tocar el carrito, debe usar ese hook y no crear estado propio.
+- **`App.jsx` navega con un estado `vista`, no con React Router.** Es
+  transitorio hasta que la Rama 3 integre el router. Las páginas ya solo
+  reciben `onNavigate`, así que la migración a `<Routes>` queda acotada a
+  `App.jsx`. Ver la nota en la cabecera de ese archivo.
+- **El total ya soporta ofertas:** los cálculos usan
+  `getUnitPrice(item)`, que toma `precioOferta` si existe y `precio` si no.
+  Cuando la Rama 1 agregue el campo `oferta`, el carrito no necesita cambios.
+- **React-Bootstrap ya se usa** en carrito, checkout y páginas. No se cargó el
+  JS de Bootstrap: React-Bootstrap resuelve el comportamiento en React.
+- **Accesibilidad verificada:** los botones del carrito tienen
+  `aria-label` con el nombre del producto, y el formulario declara
+  `aria-invalid` y `aria-describedby` (react-bootstrap solo agrega la clase
+  `is-invalid`, no el atributo).
+
+### Pendientes que quedan para otras ramas
+
+- **Rama 3:** navbar real, rutas con React Router y badge del carrito. Ya está
+  expuesta la cantidad total en `useCart().count`.
+- **Rama 4:** `README.md` está desactualizado. La sección "Estructura actual"
+  necesita agregar `pages/`, `utils/`, `hooks/` y `context/`, y la descripción
+  de `App.jsx` ya no dice "estado global inicial". También falta el documento
+  de cobertura con los tests de esta rama.
+- **Rama 1:** el bug de imágenes (`/images/*.jpg` en `products.js` contra
+  archivos `.jpeg` reales) sigue sin corregir, por ser de esa rama.
 
 ## Rama 3: `feature/navigation-layout-public-pages`
 
