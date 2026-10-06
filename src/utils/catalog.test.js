@@ -26,7 +26,7 @@ const muestra = [
     { id: 'FR001', nombre: 'Manzanas Fuji', categoria: 'Frutas Frescas', precio: 1200, precioOferta: 990, unidad: 'kilo', stock: 150, origen: 'Valle del Maule', imagen: '/images/manzanas.jpeg', descripcion: 'Manzanas Fuji crujientes y dulces, del Valle del Maule.' },
     { id: 'FR002', nombre: 'Naranjas Valencia', categoria: 'Frutas Frescas', precio: 1000, unidad: 'kilo', stock: 200, origen: 'Región de Coquimbo', imagen: '/images/naranjas.jpeg', descripcion: 'Jugosas y ricas en vitamina C, ideales para zumos frescos.' },
     { id: 'VR001', nombre: 'Zanahorias', categoria: 'Verduras Orgánicas', precio: 900, unidad: 'kilo', stock: 100, origen: "Región de O'Higgins", imagen: '/images/zanahorias.jpeg', descripcion: 'Zanahorias crujientes cultivadas sin pesticidas.' },
-    { id: 'VR002', nombre: 'Espinacas', categoria: 'Verduras Orgánicas', precio: 700, unidad: 'bolsa de 500g', stock: 80, origen: 'Región Metropolitana', imagen: '/images/espinacas.svg', descripcion: 'Espinacas frescas y nutritivas para ensaladas.' },
+    { id: 'VR002', nombre: 'Espinacas', categoria: 'Verduras Orgánicas', precio: 700, unidad: 'bolsa de 500g', stock: 80, origen: 'Región Metropolitana', imagen: '/images/espinacas.jpg', descripcion: 'Espinacas frescas y nutritivas para ensaladas.' },
 ]
 
 test('priceForDisplay usa el precio de oferta cuando existe', () => {

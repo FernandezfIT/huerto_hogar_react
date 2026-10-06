@@ -51,8 +51,7 @@ function OffersPage() {
                     />
 
                     <Alert variant="info" className="mt-4 mb-0">
-                        Los precios de oferta son datos simulados del catálogo: la app no se
-                        conecta a un sistema real de promociones.
+                        Los precios de oferta están sujetos a disponibilidad y cambian cada semana.
                     </Alert>
                 </>
             )}

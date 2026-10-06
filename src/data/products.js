@@ -46,7 +46,7 @@ export const products = [
         unidad: "kilo",
         stock: 250,
         origen: "Región de Arica y Parinacota",
-        imagen: "/images/platanos.svg",
+        imagen: "/images/platanos.jpg",
         descripcion:
             "Plátanos maduros y dulces, perfectos para el desayuno o como snack energético. Estos plátanos son ricos en potasio y vitaminas, ideales para mantener una dieta equilibrada.",
     },
@@ -71,7 +71,7 @@ export const products = [
         unidad: "bolsa de 500g",
         stock: 80,
         origen: "Región Metropolitana",
-        imagen: "/images/espinacas.svg",
+        imagen: "/images/espinacas.jpg",
         descripcion:
             "Espinacas frescas y nutritivas, perfectas para ensaladas y batidos verdes. Estas espinacas son cultivadas bajo prácticas orgánicas que garantizan su calidad y valor nutricional.",
     },
@@ -84,7 +84,7 @@ export const products = [
         unidad: "kilo",
         stock: 120,
         origen: "Región del Maule",
-        imagen: "/images/pimientos.svg",
+        imagen: "/images/pimientos.jpg",
         descripcion:
             "Pimientos rojos, amarillos y verdes, ideales para salteados y platos coloridos. Ricos en antioxidantes y vitaminas, estos pimientos añaden un toque vibrante y saludable a cualquier receta.",
     },
@@ -96,7 +96,7 @@ export const products = [
         unidad: "frasco de 500g",
         stock: 50,
         origen: "Región de La Araucanía",
-        imagen: "/images/miel.svg",
+        imagen: "/images/miel.jpg",
         descripcion:
             "Miel pura y orgánica producida por apicultores locales. Rica en antioxidantes y con un sabor inigualable, perfecta para endulzar de manera natural tus comidas y bebidas.",
     },
