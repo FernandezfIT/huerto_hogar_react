@@ -6,8 +6,8 @@ function ProfilePage() {
             <h1 className="h3 mb-4">Mi Perfil</h1>
 
             <Alert variant="info">
-                Esta vista es una maqueta frontend. En esta versión no existe autenticación
-                real ni almacenamiento de usuarios registrados.
+                Estamos terminando tu área personal: por ahora ves datos de ejemplo. Pronto podrás
+                guardar tu información.
             </Alert>
 
             <Row className="g-4">
@@ -19,10 +19,10 @@ function ProfilePage() {
                                 <strong>Nombre:</strong> Cliente Demo
                             </p>
                             <p className="mb-1">
-                                <strong>Correo:</strong>cloiente@correo.cl
+                                <strong>Correo:</strong> cliente@correo.cl
                             </p>
                             <p className="mb-0">
-                                <strong>Teléfono</strong>+56 9 1234 5678
+                                <strong>Teléfono:</strong> +56 9 1234 5678
                             </p>
                         </Card.Body>
                     </Card>
@@ -34,7 +34,7 @@ function ProfilePage() {
                             <h2 className="h5">Preferencias</h2>
                             <ul className="mb-0">
                                 <li>Productos frescos de temporada.</li>
-                                <li>Entrega local simulada.</li>
+                                <li>Entrega a domicilio en tu comuna.</li>
                                 <li>Compras rápidas desde catálogo.</li>
                             </ul>
                         </Card.Body>

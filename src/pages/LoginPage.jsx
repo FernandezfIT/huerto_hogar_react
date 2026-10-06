@@ -30,7 +30,7 @@ function LoginPage(){
                     </Form>
 
                     <p className="mt-3 mb-0 text-center">
-                        ¿No tiens cuenta? <Link to = "/registro">Crear Cuenta</Link>
+                        ¿No tienes cuenta? <Link to = "/registro">Crear cuenta</Link>
                     </p>
                 </Card.Body>
             </Card>

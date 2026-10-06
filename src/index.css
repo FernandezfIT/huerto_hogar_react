@@ -1,111 +1,177 @@
+/*
+  Tema HuertoHogar.
+
+  Paleta de colores:
+    --verde        #2E8B57   verde esmeralda para botones, enlaces e interactivos
+    --amarillo     #D4A017   amarillo mostaza en ofertas y promociones
+    --marron       #8B4513   marrón claro para títulos y subtítulos
+    --blanco       #F7F7F7   blanco suave para los fondos principales
+    --gris-oscuro  #333333   texto principal
+    --gris-medio   #666666   texto secundario
+
+  Los tokens raíz de Bootstrap (--bs-*) se remapean a esta paleta. Los botones
+  de Bootstrap 5.3 no se recolorean desde :root (cada .btn-* trae el hex fijo),
+  por lo que también se sobreescriben sus custom properties.
+*/
+
 :root {
-  --text: #6b6375;
-  --text-h: #08060d;
-  --bg: #fff;
-  --border: #e5e4e7;
-  --code-bg: #f4f3ec;
-  --accent: #aa3bff;
-  --accent-bg: rgba(170, 59, 255, 0.1);
-  --accent-border: rgba(170, 59, 255, 0.5);
-  --social-bg: rgba(244, 243, 236, 0.5);
-  --shadow:
-    rgba(0, 0, 0, 0.1) 0 10px 15px -3px, rgba(0, 0, 0, 0.05) 0 4px 6px -2px;
+    --verde: #2E8B57;
+    --amarillo: #D4A017;
+    --marron: #8B4513;
+    --blanco: #F7F7F7;
+    --gris-oscuro: #333333;
+    --gris-medio: #666666;
+    --verde-hover: #246b45;
+    --rojo: #d9534f;
+    --rojo-hover: #c9302c;
+    --contenedor: #f9f9f9;
 
-  --sans: system-ui, 'Segoe UI', Roboto, sans-serif;
-  --heading: system-ui, 'Segoe UI', Roboto, sans-serif;
-  --mono: ui-monospace, Consolas, monospace;
+    --bs-body-bg: var(--blanco);
+    --bs-body-color: var(--gris-oscuro);
+    --bs-heading-color: var(--marron);
+    --bs-body-font-family: 'Montserrat', sans-serif;
 
-  font: 18px/145% var(--sans);
-  letter-spacing: 0.18px;
-  color-scheme: light dark;
-  color: var(--text);
-  background: var(--bg);
-  font-synthesis: none;
-  text-rendering: optimizeLegibility;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+    --bs-primary: var(--verde);
+    --bs-primary-rgb: 46, 139, 87;
+    --bs-success: var(--verde);
+    --bs-success-rgb: 46, 139, 87;
+    --bs-warning: var(--amarillo);
+    --bs-warning-rgb: 212, 160, 23;
+    --bs-danger: var(--rojo);
+    --bs-danger-rgb: 217, 83, 79;
+    --bs-secondary: var(--gris-medio);
+    --bs-secondary-rgb: 102, 102, 102;
 
-  @media (max-width: 1024px) {
-    font-size: 16px;
-  }
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --text: #9ca3af;
-    --text-h: #f3f4f6;
-    --bg: #16171d;
-    --border: #2e303a;
-    --code-bg: #1f2028;
-    --accent: #c084fc;
-    --accent-bg: rgba(192, 132, 252, 0.15);
-    --accent-border: rgba(192, 132, 252, 0.5);
-    --social-bg: rgba(47, 48, 58, 0.5);
-    --shadow:
-      rgba(0, 0, 0, 0.4) 0 10px 15px -3px, rgba(0, 0, 0, 0.25) 0 4px 6px -2px;
-  }
-
-  #social .button-icon {
-    filter: invert(1) brightness(2);
-  }
+    --bs-link-color: var(--verde);
+    --bs-link-hover-color: var(--verde-hover);
 }
 
 body {
-  margin: 0;
-}
-
-#root {
-  width: 1126px;
-  max-width: 100%;
-  margin: 0 auto;
-  text-align: center;
-  border-inline: 1px solid var(--border);
-  min-height: 100svh;
-  display: flex;
-  flex-direction: column;
-  box-sizing: border-box;
+    margin: 0;
+    background-color: var(--blanco);
+    color: var(--gris-oscuro);
+    font-family: 'Montserrat', sans-serif;
 }
 
 h1,
-h2 {
-  font-family: var(--heading);
-  font-weight: 500;
-  color: var(--text-h);
+h2,
+h3,
+h4,
+h5,
+h6 {
+    font-family: 'Playfair Display', serif;
+    color: var(--marron);
 }
 
-h1 {
-  font-size: 56px;
-  letter-spacing: -1.68px;
-  margin: 32px 0;
-  @media (max-width: 1024px) {
-    font-size: 36px;
-    margin: 20px 0;
-  }
-}
-h2 {
-  font-size: 24px;
-  line-height: 118%;
-  letter-spacing: -0.24px;
-  margin: 0 0 8px;
-  @media (max-width: 1024px) {
-    font-size: 20px;
-  }
-}
-p {
-  margin: 0;
+/* Banner a ancho completo con la imagen redondeada */
+#banner img {
+    width: 100%;
+    height: auto;
+    border-radius: 8px;
+    display: block;
+    margin-bottom: 2rem;
 }
 
-code,
-.counter {
-  font-family: var(--mono);
-  display: inline-flex;
-  border-radius: 4px;
-  color: var(--text-h);
+/* Pie de página oscuro, replica #piedepagina de final */
+.pie-huerto {
+    background-color: var(--gris-oscuro);
+    color: white;
+    margin-top: auto;
 }
 
-code {
-  font-size: 15px;
-  line-height: 135%;
-  padding: 4px 8px;
-  background: var(--code-bg);
+/* Botones: Bootstrap 5.3 hardcodea los hex en .btn-*; los remapeamos a la paleta */
+.btn-primary,
+.btn-success {
+    --bs-btn-bg: var(--verde);
+    --bs-btn-border-color: var(--verde);
+    --bs-btn-hover-bg: var(--verde-hover);
+    --bs-btn-hover-border-color: var(--verde-hover);
+    --bs-btn-active-bg: var(--verde-hover);
+    --bs-btn-active-border-color: var(--verde-hover);
+    --bs-btn-focus-shadow-rgb: var(--bs-success-rgb);
+    --bs-btn-disabled-bg: var(--verde);
+    --bs-btn-disabled-border-color: var(--verde);
+}
+
+.btn-outline-primary,
+.btn-outline-success {
+    --bs-btn-color: var(--verde);
+    --bs-btn-border-color: var(--verde);
+    --bs-btn-hover-color: #fff;
+    --bs-btn-hover-bg: var(--verde);
+    --bs-btn-hover-border-color: var(--verde);
+    --bs-btn-active-color: #fff;
+    --bs-btn-active-bg: var(--verde);
+    --bs-btn-active-border-color: var(--verde);
+    --bs-btn-focus-shadow-rgb: var(--bs-success-rgb);
+}
+
+.btn-warning {
+    --bs-btn-bg: var(--amarillo);
+    --bs-btn-border-color: var(--amarillo);
+    --bs-btn-hover-bg: #b8890f;
+    --bs-btn-hover-border-color: #ac8110;
+    --bs-btn-active-bg: #b8890f;
+    --bs-btn-active-border-color: #ac8110;
+    --bs-btn-focus-shadow-rgb: var(--bs-warning-rgb);
+    --bs-btn-disabled-bg: var(--amarillo);
+    --bs-btn-disabled-border-color: var(--amarillo);
+}
+
+.btn-danger,
+.btn-outline-danger {
+    --bs-btn-color: #fff;
+    --bs-btn-border-color: var(--rojo);
+    --bs-btn-hover-color: #fff;
+    --bs-btn-hover-bg: var(--rojo-hover);
+    --bs-btn-hover-border-color: var(--rojo-hover);
+    --bs-btn-active-color: #fff;
+    --bs-btn-active-bg: var(--rojo-hover);
+    --bs-btn-active-border-color: var(--rojo-hover);
+    --bs-btn-focus-shadow-rgb: var(--bs-danger-rgb);
+}
+
+.btn-danger {
+    --bs-btn-bg: var(--rojo);
+    --bs-btn-disabled-bg: var(--rojo);
+    --bs-btn-disabled-border-color: var(--rojo);
+}
+
+.btn-outline-danger {
+    --bs-btn-color: var(--rojo);
+}
+
+.btn-secondary,
+.btn-outline-secondary {
+    --bs-btn-color: #fff;
+    --bs-btn-border-color: var(--gris-medio);
+    --bs-btn-hover-color: #fff;
+    --bs-btn-hover-bg: #4d4d4d;
+    --bs-btn-hover-border-color: #4d4d4d;
+    --bs-btn-active-color: #fff;
+    --bs-btn-active-bg: #4d4d4d;
+    --bs-btn-active-border-color: #4d4d4d;
+    --bs-btn-focus-shadow-rgb: var(--bs-secondary-rgb);
+}
+
+.btn-secondary {
+    --bs-btn-bg: var(--gris-medio);
+    --bs-btn-disabled-bg: var(--gris-medio);
+    --bs-btn-disabled-border-color: var(--gris-medio);
+}
+
+.btn-outline-secondary {
+    --bs-btn-color: var(--gris-medio);
+}
+
+#root {
+    width: 1126px;
+    max-width: 100%;
+    margin: 0 auto;
+    text-align: center;
+    border-inline: 1px solid #e5e4e7;
+    min-height: 100svh;
+    display: flex;
+    flex-direction: column;
+    box-sizing: border-box;
 }

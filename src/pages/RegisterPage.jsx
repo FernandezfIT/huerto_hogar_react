@@ -9,8 +9,7 @@ function RegisterPage() {
                     <h1 className="h3 mb-3">Crear cuenta</h1>
 
                     <p className="text-muted">
-                        Este formulario prepara la experiencia de registro. En esta versión
-                        frontend no se almacenan usuarios reales.
+                        Crea tu cuenta para comprar más rápido y llevar el control de tus pedidos.
                     </p>
 
                     <Form>
@@ -40,7 +39,7 @@ function RegisterPage() {
                     </Form>
 
                     <p className="mt-3 mb-0 text-center">
-                        ¿Ya tienes cuenta? <Link to="/login">Iniciar sesion</Link>
+                        ¿Ya tienes cuenta? <Link to="/login">Iniciar sesión</Link>
                     </p>
                 </Card.Body>
             </Card>

@@ -6,7 +6,7 @@ function AppNavbar() {
     const { count } = useCart()
 
     return (
-        <Navbar bg="light" expand="lg" className="border-bottom mb-4">
+        <Navbar bg="success" data-bs-theme="dark" expand="lg" className="border-bottom mb-4">
             <Container>
                 <Navbar.Brand as={NavLink} to='/'>
                     Huerto Hogar

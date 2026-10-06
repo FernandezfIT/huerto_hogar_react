@@ -29,7 +29,7 @@ function ProductDetailPage({ idDelProducto }) {
                 <Alert variant="warning">
                     <Alert.Heading as="h1">No encontramos ese producto</Alert.Heading>
                     <p className="mb-0">
-                        El producto con id {idDelProducto} no existe en el catálogo.
+                        Lo sentimos, este producto ya no está disponible en el catálogo.
                     </p>
                 </Alert>
 
@@ -78,7 +78,7 @@ function ProductDetailPage({ idDelProducto }) {
 
                 <Col xs={12} md={7}>
                     <Card.Text className="text-secondary small mb-1">
-                        {producto.id} · {producto.categoria}
+                        {producto.categoria}
                     </Card.Text>
 
                     <h1 className="h3 mb-3">{producto.nombre}</h1>

@@ -121,7 +121,7 @@ test('un id desconocido avisa que no se encontró el producto', () => {
     expect(
         screen.getByRole('heading', { name: /no encontramos ese producto/i })
     ).toBeInTheDocument()
-    expect(screen.getByText(/NO001/)).toBeInTheDocument()
+    expect(screen.getByText(/ya no está disponible/i)).toBeInTheDocument()
 })
 
 test('un id desconocido no muestra el botón de agregar al carrito', () => {

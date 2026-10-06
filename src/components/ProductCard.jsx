@@ -44,7 +44,7 @@ function ProductCard({ product, onAddToCart }) {
 
             <Card.Body>
                 <Card.Text className="text-secondary small mb-1">
-                    {product.id} · {product.categoria}
+                    {product.categoria}
                 </Card.Text>
 
                 <Card.Title as="h2" className="h5">

@@ -61,10 +61,10 @@ test('anuncia el mejor descuento de la selección', () => {
     )
 })
 
-test('avisa que los precios de oferta son simulados', () => {
+test('avisa que los precios de oferta pueden cambiar', () => {
     renderOfertas()
 
-    expect(screen.getByText(/datos simulados del catálogo/i)).toBeInTheDocument()
+    expect(screen.getByText(/precios de oferta están sujetos a disponibilidad/i)).toBeInTheDocument()
 })
 
 test('agregar una oferta la guarda en el carrito', async () => {

@@ -1,17 +1,20 @@
 import { Container } from "react-bootstrap"
 import { Outlet } from "react-router-dom"
 import AppNavbar from "../components/AppNavbar"
+import Banner from "../components/Banner"
 
 function MainLayout(){
     return(
         <>
             <AppNavbar/>
 
+            <Banner/>
+
             <Container as = "main" className="pb-5">
                 <Outlet/>
             </Container>
 
-            <footer className="border-top py-4 text-center text-muted">
+            <footer className="pie-huerto py-4 text-center">
                 <Container>
                     <small>Huerto Hogar - Productos frescos y naturales</small>
                 </Container>
@@ -21,17 +24,3 @@ function MainLayout(){
 }
 
 export default MainLayout
-
-
-/**
- * 
- *  Outlet es el espacio donde React Router renderiza la página actual.
- * 
- * 
- * 
- * 
- * 
- */
-
-
-

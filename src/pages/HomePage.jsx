@@ -33,13 +33,13 @@ function HomePage() {
                 <Col xs={12} lg={6}>
                     <Card className='shadow-sm'>
                         <Card.Body>
-                            <h2 className='h4'>¿Que encontrarás?</h2>
+                            <h2 className='h4'>¿Qué encontrarás?</h2>
 
                             <ul className='ub-0'>
-                                <li>Catálogo de productos frescos.</li>
-                                <li>Carrito con cantidades, totales y persistencia.</li>
-                                <li>Checkout con validaciones de datos del cliente.</li>
-                                <li>Diseño responsivo con React-Bootstrap.</li>
+                                <li>Productos frescos y de temporada, cosechados en el campo y llevados directo a tu mesa.</li>
+                                <li>Carrito práctico: eliges cantidades, revisas tu detalle y ves el total antes de pagar.</li>
+                                <li>Compra rápida y segura: solo necesitas tu contacto y tu dirección de despacho.</li>
+                                <li>Búsqueda y filtros por categoría y ofertas para encontrar tus favoritos al instante.</li>
 
                             </ul>
                         </Card.Body>
