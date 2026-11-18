@@ -1,5 +1,7 @@
 # Huerto Hogar React — EV2 FullStack II
 
+> **Planificación vigente EV3:** consultar [docs/EV3/README.md](docs/EV3/README.md) para alcance esencial, coordinación, contratos, pruebas y tres rutas independientes. **Cierre interno: 25/11/2026; entrega docente por confirmar.** La descripción EV2 siguiente se conserva como antecedente del frontend existente; la documentación EV3 no acredita funcionalidades ya implementadas.
+
 Proyecto frontend para la Evaluación Parcial 2 de Desarrollo FullStack II.
 
 El objetivo es migrar el ecommerce anterior de Huerto Hogar a una aplicación React con Vite, Bootstrap, componentes reutilizables, navegación, estado, datos simulados y pruebas unitarias.
