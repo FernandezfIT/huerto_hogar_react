@@ -1,6 +1,3 @@
-import { categories } from '../data/categories'
-import { products } from '../data/products'
-
 /**
  * Devuelve el precio que realmente se cobra por el producto.
  * Reutiliza la misma regla del carrito (getUnitPrice en cartCalculations):
@@ -11,25 +8,22 @@ export function priceForDisplay(product) {
 }
 
 export function discountPercent(product) {
-    if (product.precioOferta === undefined || product.precio === 0) {
+    // null o undefined significa sin oferta
+    if (product.precioOferta === undefined || product.precioOferta === null || product.precio === 0) {
         return 0
     }
 
     return Math.round((1 - product.precioOferta / product.precio) * 100)
 }
 
-/**
- * Categorías que tienen al menos un producto en el catálogo.
- * "Productos Lácteos" viene del enunciado pero quedó sin productos, así que no
- * aparece en la interfaz. Si se agrega un lácteo, aparece sin tocar nada.
- */
-export function categoriesWithProducts(source = products) {
+// devuelve las categorias de la api que tienen al menos un producto
+export function categoriesWithProducts(source = [], categorias = []) {
     const enUso = new Set(source.map((product) => product.categoria))
 
-    return categories.filter((categoria) => enUso.has(categoria.nombre))
+    return categorias.filter((categoria) => enUso.has(categoria.nombre))
 }
 
-export function getProductsByCategory(categoryName, source = products) {
+export function getProductsByCategory(categoryName, source = []) {
     if (!categoryName) {
         return source
     }
@@ -41,15 +35,21 @@ export function getProductsByCategory(categoryName, source = products) {
  * Cuenta cuántos productos hay por categoría. Se usa para mostrar el número en
  * los botones del filtro, así el usuario sabe qué va a ver antes de clickear.
  */
-export function countByCategory(source = products) {
+export function countByCategory(source = []) {
     return source.reduce((counts, product) => {
         counts[product.categoria] = (counts[product.categoria] ?? 0) + 1
         return counts
     }, {})
 }
 
-export function getOffers(source = products) {
-    return source.filter((product) => product.precioOferta !== undefined)
+// solo productos con oferta valida (numero positivo menor al precio)
+export function getOffers(source = []) {
+    return source.filter(
+        (product) =>
+            Number.isFinite(product.precioOferta) &&
+            product.precioOferta > 0 &&
+            product.precioOferta < product.precio
+    )
 }
 
 /**
@@ -75,7 +75,7 @@ export function normalizeText(text) {
  * Busca productos por nombre. Con texto vacío devuelve la lista completa,
  * para que el catálogo arranque mostrando todo.
  */
-export function searchProducts(query, source = products) {
+export function searchProducts(query, source = []) {
     const term = normalizeText(query ?? '')
 
     if (term === '') {
@@ -89,7 +89,7 @@ export function searchProducts(query, source = products) {
  * Aplica categoría y búsqueda a la vez. Es el orden correcto: primero se acota
  * por categoría y después se busca dentro de lo que quedó.
  */
-export function filterProducts({ categoria = null, query = '' } = {}, source = products) {
+export function filterProducts({ categoria = null, query = '' } = {}, source = []) {
     return searchProducts(query, getProductsByCategory(categoria, source))
 }
 
@@ -100,7 +100,7 @@ export function filterProducts({ categoria = null, query = '' } = {}, source = p
  * justamente lo que necesita la página de detalle para mostrar su estado de
  * "producto no encontrado" en vez de romper el render.
  */
-export function getProductById(id, source = products) {
+export function getProductById(id, source = []) {
     return source.find((product) => product.id === id)
 }
 
@@ -115,7 +115,7 @@ export function getProductById(id, source = products) {
  * `idAReemplazar` lo usa updateProduct: al editar, el producto sigue ocupando
  * su propio id, así que no debe contarse como duplicado de sí mismo.
  */
-export function validateProduct(product, source = products, idAReemplazar = null) {
+export function validateProduct(product, source = [], idAReemplazar = null) {
     const errores = {}
 
     if (typeof product.id !== 'string' || product.id.trim() === '') {
@@ -130,8 +130,9 @@ export function validateProduct(product, source = products, idAReemplazar = null
         }
     }
 
-    if (!categories.some((categoria) => categoria.nombre === product.categoria)) {
-        errores.categoria = 'La categoría debe ser una de las declaradas en categories.js.'
+    // la categoria debe existir en el catalogo
+    if (!source.some((otro) => otro.categoria === product.categoria)) {
+        errores.categoria = 'La categoría debe ser una de las que ya existen en el catálogo.'
     }
 
     if (!Number.isInteger(product.precio) || product.precio <= 0) {
@@ -160,7 +161,7 @@ export function validateProduct(product, source = products, idAReemplazar = null
  * producto, igual que hace el reducer del carrito con sus líneas. Así el
  * catálogo importado queda intacto y cada llamada es predecible.
  */
-export function createProduct(product, source = products) {
+export function createProduct(product, source = []) {
     const errores = validateProduct(product, source)
 
     if (Object.keys(errores).length > 0) {
@@ -177,7 +178,7 @@ export function createProduct(product, source = products) {
  * líneas del carrito lo usan como referencia, y cambiarlo rompería los enlaces
  * ya compartidos. Solo se mezclan los campos editables.
  */
-export function updateProduct(id, cambios, source = products) {
+export function updateProduct(id, cambios, source = []) {
     const original = getProductById(id, source)
 
     if (original === undefined) {
@@ -200,7 +201,7 @@ export function updateProduct(id, cambios, source = products) {
  * Falla si el id no existe, para que un typo en el id no se lea como una
  * eliminación exitosa que en realidad no borró nada.
  */
-export function deleteProduct(id, source = products) {
+export function deleteProduct(id, source = []) {
     if (getProductById(id, source) === undefined) {
         throw new Error(`No existe un producto con el id ${id}.`)
     }

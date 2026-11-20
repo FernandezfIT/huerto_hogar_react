@@ -5,11 +5,12 @@
   botones que usan useNavigate necesitan MemoryRouter.
 */
 
-import { render, screen } from '@testing-library/react'
+import { render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { MemoryRouter, Route, Routes } from 'react-router-dom'
-import { beforeEach, expect, test } from 'vitest'
+import { beforeEach, expect, test, vi } from 'vitest'
 import { CartProvider } from '../context/CartProvider'
+import { getProduct } from '../services/productService'
 import ProductDetailPage from './ProductDetailPage'
 
 const CARTAZO = 'huerto-hogar-cart'
@@ -32,49 +33,58 @@ function renderDetalle(idDelProducto) {
     )
 }
 
+// reemplaza el servicio real por el falso
+vi.mock('../services/productService', () => import('../test/fakeProductService'))
+
+// muestra la pagina y espera a que termine la carga
+async function cargarDetalle(id) {
+    renderDetalle(id)
+    await waitFor(() => expect(screen.queryByText(/cargando producto/i)).not.toBeInTheDocument())
+}
+
 beforeEach(() => {
     localStorage.clear()
 })
 
-test('muestra el nombre y la descripción del producto', () => {
-    renderDetalle('FR001')
+test('muestra el nombre y la descripción del producto', async () => {
+    await cargarDetalle('FR001')
 
     expect(screen.getByRole('heading', { name: 'Manzanas Fuji' })).toBeInTheDocument()
     expect(screen.getByText(/crujientes y dulces/i)).toBeInTheDocument()
 })
 
-test('muestra el precio en oferta y el precio normal tachado', () => {
-    renderDetalle('FR001')
+test('muestra el precio en oferta y el precio normal tachado', async () => {
+    await cargarDetalle('FR001')
 
     expect(screen.getByText('$990')).toBeInTheDocument()
     expect(screen.getByText('$1.200')).toHaveClass('text-decoration-line-through')
     expect(screen.getByText('-18%')).toBeInTheDocument()
 })
 
-test('un producto sin oferta muestra solo su precio normal', () => {
-    renderDetalle('FR002')
+test('un producto sin oferta muestra solo su precio normal', async () => {
+    await cargarDetalle('FR002')
 
     expect(screen.getByText('$1.000')).toBeInTheDocument()
     expect(screen.queryByText(/^-\d+%$/)).not.toBeInTheDocument()
 })
 
-test('muestra el origen, la categoría, la unidad y el stock', () => {
-    renderDetalle('PO001')
+test('muestra el origen, la categoría, la unidad y el stock', async () => {
+    await cargarDetalle('PO001')
 
     expect(screen.getByText('Región de La Araucanía')).toBeInTheDocument()
     expect(screen.getByText('frasco de 500g')).toBeInTheDocument()
     expect(screen.getByText('50')).toBeInTheDocument()
 })
 
-test('usa el mismo precio que el carrito para un producto en oferta', () => {
-    renderDetalle('VR001')
+test('usa el mismo precio que el carrito para un producto en oferta', async () => {
+    await cargarDetalle('VR001')
 
     /* El carrito cobra $790 por zanahorias, no $900. */
     expect(screen.getByText('$790')).toBeInTheDocument()
 })
 
-test('la imagen usa el nombre del producto como texto alternativo', () => {
-    renderDetalle('VR002')
+test('la imagen usa el nombre del producto como texto alternativo', async () => {
+    await cargarDetalle('VR002')
 
     expect(screen.getByAltText('Espinacas Frescas')).toBeInTheDocument()
 })
@@ -82,7 +92,7 @@ test('la imagen usa el nombre del producto como texto alternativo', () => {
 test('agregar al carrito guarda el producto en localStorage', async () => {
     const user = userEvent.setup()
 
-    renderDetalle('FR002')
+    await cargarDetalle('FR002')
 
     await user.click(screen.getByRole('button', { name: /agregar naranjas valencia al carrito/i }))
 
@@ -96,7 +106,7 @@ test('agregar al carrito guarda el producto en localStorage', async () => {
 test('volver al catálogo navega a /catalogo', async () => {
     const user = userEvent.setup()
 
-    renderDetalle('FR001')
+    await cargarDetalle('FR001')
 
     await user.click(screen.getByRole('button', { name: /volver al catálogo/i }))
 
@@ -106,7 +116,7 @@ test('volver al catálogo navega a /catalogo', async () => {
 test('ver carrito navega a /carrito', async () => {
     const user = userEvent.setup()
 
-    renderDetalle('FR001')
+    await cargarDetalle('FR001')
 
     await user.click(screen.getByRole('button', { name: /^ver carrito$/i }))
 
@@ -115,8 +125,8 @@ test('ver carrito navega a /carrito', async () => {
 
 /* --- producto inexistente --- */
 
-test('un id desconocido avisa que no se encontró el producto', () => {
-    renderDetalle('NO001')
+test('un id desconocido avisa que no se encontró el producto', async () => {
+    await cargarDetalle('NO001')
 
     expect(
         screen.getByRole('heading', { name: /no encontramos ese producto/i })
@@ -124,8 +134,8 @@ test('un id desconocido avisa que no se encontró el producto', () => {
     expect(screen.getByText(/ya no está disponible/i)).toBeInTheDocument()
 })
 
-test('un id desconocido no muestra el botón de agregar al carrito', () => {
-    renderDetalle('NO001')
+test('un id desconocido no muestra el botón de agregar al carrito', async () => {
+    await cargarDetalle('NO001')
 
     expect(screen.queryByRole('button', { name: /agregar.*al carrito/i })).not.toBeInTheDocument()
 })
@@ -133,9 +143,32 @@ test('un id desconocido no muestra el botón de agregar al carrito', () => {
 test('desde el error se puede volver al catálogo', async () => {
     const user = userEvent.setup()
 
-    renderDetalle('NO001')
+    await cargarDetalle('NO001')
 
     await user.click(screen.getByRole('button', { name: /ver catálogo/i }))
 
     expect(screen.getByRole('heading', { name: /pantalla del catálogo/i })).toBeInTheDocument()
+})
+
+// error de red con reintento
+test('un error de red muestra el error y permite reintentar', async () => {
+    const user = userEvent.setup()
+
+    getProduct.mockRejectedValueOnce(new Error('API caída'))
+    renderDetalle('FR001')
+
+    expect(await screen.findByRole('heading', { name: /no pudimos cargar el producto/i })).toBeInTheDocument()
+    expect(screen.queryByRole('heading', { name: /no encontramos ese producto/i })).not.toBeInTheDocument()
+
+    await user.click(screen.getByRole('button', { name: /reintentar/i }))
+
+    expect(await screen.findByRole('heading', { name: 'Manzanas Fuji' })).toBeInTheDocument()
+})
+
+// mientras carga no se ve ningun producto
+test('mientras carga no muestra ningún producto', () => {
+    renderDetalle('FR001')
+
+    expect(screen.getByRole('status')).toHaveTextContent(/cargando producto/i)
+    expect(screen.queryByRole('heading', { name: 'Manzanas Fuji' })).not.toBeInTheDocument()
 })

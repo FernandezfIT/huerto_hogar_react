@@ -1,29 +1,84 @@
-/*
-  ProductDetailPage es la ficha de un producto: la ruta /producto/:id.
-
-  Recibe el id por props (`idDelProducto`) y no lo lee del router, para que la
-  página se pueda probar montándola sola, igual que CartPage o CheckoutPage.
-
-  Antes esta ruta no existía: el nombre del producto en ProductCard ya enlazaba
-  a /producto/:id, pero el catch-all de App.jsx mandaba a Home en silencio. Ahora
-  hay ruta real y, si el id no existe, la página lo dice en vez de romper.
-*/
-
-import { useState } from 'react'
-import { Alert, Badge, Button, Card, Col, Row } from 'react-bootstrap'
+import { useEffect, useState } from 'react'
+import { Alert, Badge, Button, Card, Col, Row, Spinner } from 'react-bootstrap'
 import { useNavigate } from 'react-router-dom'
 import { useCart } from '../hooks/useCart'
-import { discountPercent, getProductById, priceForDisplay } from '../utils/catalog'
+import { getProduct } from '../services/productService'
+import { discountPercent, priceForDisplay } from '../utils/catalog'
 import { formatCurrency } from '../utils/formatCurrency'
 
 function ProductDetailPage({ idDelProducto }) {
     const { addItem } = useCart()
     const navigate = useNavigate()
     const [imagenRota, setImagenRota] = useState(false)
+    // estado de la carga del producto, guarda el id al que pertenece
+    const [carga, setCarga] = useState({ id: null, status: 'loading', producto: null })
+    const [intento, setIntento] = useState(0)
 
-    const producto = getProductById(idDelProducto)
+    // pide el producto por id cada vez que cambia el id o el intento
+    useEffect(() => {
+        const controller = new AbortController()
+        const { signal } = controller
 
-    if (producto === undefined) {
+        getProduct(idDelProducto, { signal })
+            .then((producto) => {
+                if (!signal.aborted) {
+                    setCarga({ id: idDelProducto, status: 'success', producto })
+                }
+            })
+            .catch((error) => {
+                if (!signal.aborted) {
+                    // 404 es producto inexistente, cualquier otro error es de carga
+                    const status = error?.status === 404 ? 'notfound' : 'error'
+                    setCarga({ id: idDelProducto, status, producto: null })
+                }
+            })
+
+        return () => controller.abort()
+    }, [idDelProducto, intento])
+
+    // vuelve a pedir el producto
+    function reintentar() {
+        setCarga({ id: null, status: 'loading', producto: null })
+        setIntento((actual) => actual + 1)
+    }
+
+    // si el estado guardado es de otro id se considera cargando
+    const status = carga.id === idDelProducto ? carga.status : 'loading'
+    const producto = status === 'success' ? carga.producto : null
+
+    // pantalla de carga
+    if (status === 'loading') {
+        return (
+            <section className="py-4">
+                <div role="status" className="d-flex align-items-center gap-2">
+                    <Spinner animation="border" size="sm" />
+                    <span>Cargando producto...</span>
+                </div>
+            </section>
+        )
+    }
+
+    // pantalla de error con reintento
+    if (status === 'error') {
+        return (
+            <section className="py-4 text-center">
+                <Alert variant="danger" role="alert">
+                    <Alert.Heading as="h1">No pudimos cargar el producto</Alert.Heading>
+                    <p className="mb-0">Revisa tu conexión e inténtalo de nuevo.</p>
+                </Alert>
+
+                <Button variant="primary" className="me-2" onClick={reintentar}>
+                    Reintentar
+                </Button>
+                <Button variant="outline-secondary" onClick={() => navigate('/catalogo')}>
+                    Ver catálogo
+                </Button>
+            </section>
+        )
+    }
+
+    // pantalla de producto no encontrado
+    if (producto === null) {
         return (
             <section className="py-4 text-center">
                 <Alert variant="warning">

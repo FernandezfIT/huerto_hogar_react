@@ -15,6 +15,7 @@ import {
     validateProduct,
 } from './catalog'
 import { expect, test } from 'vitest'
+import { categories } from '../data/categories'
 import { products } from '../data/products'
 
 /*
@@ -60,14 +61,14 @@ test('getProductsByCategory con una categoría desconocida devuelve vacío', () 
 })
 
 test('categoriesWithProducts descarta las categorías sin productos', () => {
-    const nombres = categoriesWithProducts(muestra).map((c) => c.nombre)
+    const nombres = categoriesWithProducts(muestra, categories).map((c) => c.nombre)
 
     expect(nombres).toEqual(['Frutas Frescas', 'Verduras Orgánicas'])
     expect(nombres).not.toContain('Productos Lácteos')
 })
 
 test('categoriesWithProducts sobre el catálogo real solo ofrece categorías con stock', () => {
-    const conProductos = categoriesWithProducts()
+    const conProductos = categoriesWithProducts(products, categories)
 
     expect(conProductos.map((c) => c.nombre)).toEqual([
         'Frutas Frescas',
@@ -84,7 +85,7 @@ test('countByCategory cuenta los productos de cada categoría', () => {
 })
 
 test('countByCategory sobre el catálogo real suma los 7 productos', () => {
-    const counts = countByCategory()
+    const counts = countByCategory(products)
     const total = Object.values(counts).reduce((suma, n) => suma + n, 0)
 
     expect(counts).toEqual({
@@ -102,7 +103,7 @@ test('getOffers devuelve solo los productos con precioOferta', () => {
 })
 
 test('getOffers sobre el catálogo real devuelve los tres en oferta', () => {
-    expect(getOffers().map((p) => p.id)).toEqual(['FR001', 'VR001', 'VR003'])
+    expect(getOffers(products).map((p) => p.id)).toEqual(['FR001', 'VR001', 'VR003'])
 })
 /* --- normalizeText --- */
 
@@ -146,19 +147,19 @@ test('searchProducts sin coincidencias devuelve lista vacía', () => {
 
 test('searchProducts sobre el catálogo real encuentra los siete productos', () => {
     /* "Platano" sin tilde tiene que encontrar "Plátanos Cavendish". */
-    expect(searchProducts('platano').map((p) => p.id)).toEqual(['FR003'])
-    expect(searchProducts('miel').map((p) => p.id)).toEqual(['PO001'])
-    expect(searchProducts('espinacas').map((p) => p.id)).toEqual(['VR002'])
-    expect(searchProducts('pimiento').map((p) => p.id)).toEqual(['VR003'])
+    expect(searchProducts('platano', products).map((p) => p.id)).toEqual(['FR003'])
+    expect(searchProducts('miel', products).map((p) => p.id)).toEqual(['PO001'])
+    expect(searchProducts('espinacas', products).map((p) => p.id)).toEqual(['VR002'])
+    expect(searchProducts('pimiento', products).map((p) => p.id)).toEqual(['VR003'])
 })
 
 test('searchProducts ignora espacios que el usuario escribe de más', () => {
-    expect(searchProducts('  miel  ').map((p) => p.id)).toEqual(['PO001'])
+    expect(searchProducts('  miel  ', products).map((p) => p.id)).toEqual(['PO001'])
 })
 
 test('searchProducts busca dentro del nombre completo', () => {
     /* "Cavendish" es la segunda palabra del nombre. */
-    expect(searchProducts('cavendish').map((p) => p.id)).toEqual(['FR003'])
+    expect(searchProducts('cavendish', products).map((p) => p.id)).toEqual(['FR003'])
 })
 
 /* --- filterProducts --- */
@@ -185,20 +186,20 @@ test('filterProducts aplica la categoría antes que la búsqueda', () => {
 })
 
 test('filterProducts sobre el catálogo real filtra categoría y texto juntos', () => {
-    expect(filterProducts({ categoria: 'Frutas Frescas', query: 'fuji' }).map((p) => p.id))
+    expect(filterProducts({ categoria: 'Frutas Frescas', query: 'fuji' }, products).map((p) => p.id))
         .toEqual(['FR001'])
 
-    expect(filterProducts({ query: 'miel', categoria: 'Frutas Frescas' })).toEqual([])
+    expect(filterProducts({ query: 'miel', categoria: 'Frutas Frescas' }, products)).toEqual([])
 })
 
 test('filterProducts tolera query con espacios y tildes', () => {
     /* Ojo: solo aparece VR001 y no PO001. "Orgánicas" es plural y
        "Miel Orgánica" es singular, así que "organicas" no la alcanza.
        Hacer stemming queda fuera del alcance del enunciado. */
-    expect(filterProducts({ query: '  ORGANICAS  ' }).map((p) => p.id))
+    expect(filterProducts({ query: '  ORGANICAS  ' }, products).map((p) => p.id))
         .toEqual(['VR001'])
 
-    expect(filterProducts({ query: '  organica ' }).map((p) => p.id))
+    expect(filterProducts({ query: '  organica ' }, products).map((p) => p.id))
         .toEqual(['VR001', 'PO001'])
 })
 
@@ -230,8 +231,8 @@ test('getProductById devuelve undefined si el id no existe', () => {
 })
 
 test('getProductById sobre el catálogo real encuentra los siete productos', () => {
-    expect(getProductById('PO001')?.precio).toBe(5000)
-    expect(getProductById('VR003')?.precioOferta).toBe(1290)
+    expect(getProductById('PO001', products)?.precio).toBe(5000)
+    expect(getProductById('VR003', products)?.precioOferta).toBe(1290)
 })
 
 test('validateProduct acepta un producto completo y válido', () => {
@@ -258,7 +259,7 @@ test('validateProduct acepta que el producto se repita a sí mismo', () => {
 test('validateProduct rechaza una categoría no declarada', () => {
     const errores = validateProduct({ ...productoValido, categoria: 'Lácteos Rare' }, muestra)
 
-    expect(errores.categoria).toMatch(/categories\.js/)
+    expect(errores.categoria).toMatch(/catálogo/)
 })
 
 test('validateProduct rechaza precio cero, negativo o decimal', () => {
@@ -394,7 +395,7 @@ test('el CRUD completo sobre el catálogo real deja 7 productos', () => {
         origen: 'Región del Maule',
         imagen: '/images/frutillas.svg',
         descripcion: 'Frutillas dulces y aromáticas, cosechadas a mano en el Maule.',
-    })
+    }, products)
 
     expect(catalogo).toHaveLength(8)
 
@@ -419,11 +420,28 @@ test('el CRUD nunca altera el array de productos del enunciado', () => {
     const antes = products.length
     const primero = products[0]
 
-    createProduct({ ...productoValido, id: 'FR004' })
-    updateProduct('FR002', { precio: 1100 })
-    deleteProduct('FR002')
+    createProduct({ ...productoValido, id: 'FR004' }, products)
+    updateProduct('FR002', { precio: 1100 }, products)
+    deleteProduct('FR002', products)
 
     expect(products).toHaveLength(antes)
     expect(products[0]).toEqual(primero)
-    expect(getProductById('FR002').precio).toBe(1000)
+    expect(getProductById('FR002', products).precio).toBe(1000)
+})
+
+// ofertas null o iguales al precio no cuentan
+test('getOffers ignora precioOferta null o no menor al precio', () => {
+    const fuentes = [
+        { id: 'A', precio: 1000, precioOferta: null },
+        { id: 'B', precio: 1000, precioOferta: 1000 },
+        { id: 'C', precio: 1000, precioOferta: 800 },
+        { id: 'D', precio: 1000 },
+    ]
+
+    expect(getOffers(fuentes).map((p) => p.id)).toEqual(['C'])
+})
+
+// precioOferta null no genera descuento
+test('discountPercent trata precioOferta null como sin oferta', () => {
+    expect(discountPercent({ precio: 1000, precioOferta: null })).toBe(0)
 })
