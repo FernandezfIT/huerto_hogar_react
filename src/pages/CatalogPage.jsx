@@ -15,8 +15,9 @@ import { Link, useNavigate, useSearchParams } from 'react-router-dom'
 import CategoryFilter from '../components/CategoryFilter'
 import ProductList from '../components/ProductList'
 import SearchBar from '../components/SearchBar'
-import { products } from '../data/products'
+import CatalogStatus from '../components/CatalogStatus'
 import { useCart } from '../hooks/useCart'
+import { useCatalog } from '../hooks/useCatalog'
 import {
     categoriesWithProducts,
     countByCategory,
@@ -28,6 +29,8 @@ const PARAMETRO_BUSQUEDA = 'q'
 
 function CatalogPage() {
     const { addItem } = useCart()
+    // datos del catalogo que vienen de la api
+    const { products, categories, status, reload } = useCatalog()
     const navigate = useNavigate()
     const [searchParams, setSearchParams] = useSearchParams()
 
@@ -50,7 +53,17 @@ function CatalogPage() {
         setSearchParams(siguiente)
     }
 
-    const categorias = categoriesWithProducts(products)
+    // mientras carga o si hay error no se dibuja el catalogo
+    if (status !== 'success') {
+        return (
+            <section className="py-4">
+                <h1 className="h3 mb-4">Catálogo de productos</h1>
+                <CatalogStatus status={status} onRetry={reload} />
+            </section>
+        )
+    }
+
+    const categorias = categoriesWithProducts(products, categories)
     const productos = filterProducts({ categoria, query: busqueda }, products)
 
     return (
@@ -75,7 +88,9 @@ function CatalogPage() {
                 items={productos}
                 onAddToCart={addItem}
                 emptyMessage={
-                    busqueda.trim() === ''
+                    products.length === 0
+                        ? 'Por ahora no hay productos en el catálogo.'
+                        : busqueda.trim() === ''
                         ? 'No hay productos en esta categoría.'
                         : `No encontramos productos para "${busqueda.trim()}".`
                 }

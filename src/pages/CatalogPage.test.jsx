@@ -1,14 +1,17 @@
-import { render, screen } from '@testing-library/react'
+import { render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { MemoryRouter, Route, Routes } from 'react-router-dom'
-import { beforeEach, expect, test } from 'vitest'
+import { beforeEach, expect, test, vi } from 'vitest'
 import { CartProvider } from '../context/CartProvider'
+import { CatalogProvider } from '../context/CatalogProvider'
 import { products } from '../data/products'
+import { getProducts } from '../services/productService'
 import CatalogPage from './CatalogPage'
 
 function renderCatalog(rutaInicial = '/catalogo') {
     return render(
         <MemoryRouter initialEntries={[rutaInicial]}>
+            <CatalogProvider>
             <CartProvider>
                 <Routes>
                     <Route path="/catalogo" element={<CatalogPage />} />
@@ -18,16 +21,26 @@ function renderCatalog(rutaInicial = '/catalogo') {
                     <Route path="/categorias" element={<h1>Pantalla de categorías</h1>} />
                 </Routes>
             </CartProvider>
+            </CatalogProvider>
         </MemoryRouter>
     )
+}
+
+// reemplaza el servicio real por el falso
+vi.mock('../services/productService', () => import('../test/fakeProductService'))
+
+// muestra la pagina y espera a que termine la carga
+async function cargarCatalogo(ruta) {
+    renderCatalog(ruta)
+    await waitFor(() => expect(screen.queryByText(/cargando cat/i)).not.toBeInTheDocument())
 }
 
 beforeEach(() => {
     localStorage.clear()
 })
 
-test('muestra el catálogo con los productos del enunciado', () => {
-    renderCatalog()
+test('muestra el catálogo con los productos del enunciado', async () => {
+    await cargarCatalogo()
 
     expect(screen.getByRole('heading', { name: /catálogo de productos/i })).toBeInTheDocument()
 
@@ -37,8 +50,8 @@ test('muestra el catálogo con los productos del enunciado', () => {
     )
 })
 
-test('el primer producto es Manzanas Fuji y muestra su precio en oferta', () => {
-    renderCatalog()
+test('el primer producto es Manzanas Fuji y muestra su precio en oferta', async () => {
+    await cargarCatalogo()
 
     expect(products[0].nombre).toBe('Manzanas Fuji')
     expect(screen.getByText('$990')).toBeInTheDocument()
@@ -49,7 +62,7 @@ test('el primer producto es Manzanas Fuji y muestra su precio en oferta', () => 
 test('agregar un producto desde el catálogo lo guarda en el carrito', async () => {
     const user = userEvent.setup()
 
-    renderCatalog()
+    await cargarCatalogo()
 
     await user.click(screen.getByRole('button', { name: /agregar Manzanas Fuji al carrito/i }))
 
@@ -59,15 +72,15 @@ test('agregar un producto desde el catálogo lo guarda en el carrito', async () 
 test('el botón Ver carrito navega al carrito', async () => {
     const user = userEvent.setup()
 
-    renderCatalog()
+    await cargarCatalogo()
 
     await user.click(screen.getByRole('button', { name: /ver carrito/i }))
 
     expect(screen.getByRole('heading', { name: /pantalla del carrito/i })).toBeInTheDocument()
 })
 
-test('el filtro muestra los 7 productos antes de elegir categoría', () => {
-    renderCatalog()
+test('el filtro muestra los 7 productos antes de elegir categoría', async () => {
+    await cargarCatalogo()
 
     expect(screen.getAllByRole('button', { name: /agregar.*al carrito/i })).toHaveLength(7)
     /* El botón "Todas" no lleva contador: los contadores van por categoría. */
@@ -77,7 +90,7 @@ test('el filtro muestra los 7 productos antes de elegir categoría', () => {
 test('filtrar por categoría deja solo los productos de esa categoría', async () => {
     const user = userEvent.setup()
 
-    renderCatalog()
+    await cargarCatalogo()
 
     await user.click(screen.getByRole('button', { name: /verduras orgánicas/i }))
 
@@ -91,7 +104,7 @@ test('filtrar por categoría deja solo los productos de esa categoría', async (
 test('volver a Todas restaura los 7 productos', async () => {
     const user = userEvent.setup()
 
-    renderCatalog()
+    await cargarCatalogo()
 
     await user.click(screen.getByRole('button', { name: /verduras orgánicas/i }))
     await user.click(screen.getByRole('button', { name: /todas/i }))
@@ -99,8 +112,8 @@ test('volver a Todas restaura los 7 productos', async () => {
     expect(screen.getAllByRole('button', { name: /agregar.*al carrito/i })).toHaveLength(7)
 })
 
-test('el filtro no ofrece la categoría de lácteos porque quedó sin productos', () => {
-    renderCatalog()
+test('el filtro no ofrece la categoría de lácteos porque quedó sin productos', async () => {
+    await cargarCatalogo()
 
     expect(screen.queryByRole('button', { name: /lácteos/i })).not.toBeInTheDocument()
 })
@@ -110,7 +123,7 @@ test('el filtro no ofrece la categoría de lácteos porque quedó sin productos'
 test('buscar por nombre deja solo el producto que coincide', async () => {
     const user = userEvent.setup()
 
-    renderCatalog()
+    await cargarCatalogo()
 
     await user.type(screen.getByLabelText(/buscar productos/i), 'miel')
 
@@ -121,7 +134,7 @@ test('buscar por nombre deja solo el producto que coincide', async () => {
 test('buscar ignora mayúsculas y tildes', async () => {
     const user = userEvent.setup()
 
-    renderCatalog()
+    await cargarCatalogo()
 
     /* "PLATANO" tiene que encontrar "Plátanos Cavendish". */
     await user.type(screen.getByLabelText(/buscar productos/i), 'PLATANO')
@@ -133,7 +146,7 @@ test('buscar ignora mayúsculas y tildes', async () => {
 test('la búsqueda se combina con el filtro de categoría', async () => {
     const user = userEvent.setup()
 
-    renderCatalog()
+    await cargarCatalogo()
 
     await user.click(screen.getByRole('button', { name: /verduras orgánicas/i }))
     await user.type(screen.getByLabelText(/buscar productos/i), 'espinacas')
@@ -145,7 +158,7 @@ test('la búsqueda se combina con el filtro de categoría', async () => {
 test('sin coincidencias avisa con un mensaje y no rompe la vista', async () => {
     const user = userEvent.setup()
 
-    renderCatalog()
+    await cargarCatalogo()
 
     await user.type(screen.getByLabelText(/buscar productos/i), 'zzzz')
 
@@ -160,7 +173,7 @@ test('sin coincidencias avisa con un mensaje y no rompe la vista', async () => {
 test('el contador de resultados anuncia cuántos son', async () => {
     const user = userEvent.setup()
 
-    renderCatalog()
+    await cargarCatalogo()
 
     await user.type(screen.getByLabelText(/buscar productos/i), 'miel')
 
@@ -170,7 +183,7 @@ test('el contador de resultados anuncia cuántos son', async () => {
 test('el botón Limpiar restaura el catálogo completo', async () => {
     const user = userEvent.setup()
 
-    renderCatalog()
+    await cargarCatalogo()
 
     await user.type(screen.getByLabelText(/buscar productos/i), 'miel')
     await user.click(screen.getByRole('button', { name: /limpiar/i }))
@@ -181,24 +194,24 @@ test('el botón Limpiar restaura el catálogo completo', async () => {
 
 /* --- filtros en la URL --- */
 
-test('abre filtrado si la URL trae una categoría', () => {
+test('abre filtrado si la URL trae una categoría', async () => {
     /* Es lo que hace CategoriesPage al linkear a una categoría. */
-    renderCatalog('/catalogo?categoria=Verduras%20Org%C3%A1nicas')
+    await cargarCatalogo('/catalogo?categoria=Verduras%20Org%C3%A1nicas')
 
     expect(screen.getAllByRole('button', { name: /agregar.*al carrito/i })).toHaveLength(3)
     expect(screen.queryByRole('heading', { name: /manzanas/i })).not.toBeInTheDocument()
 })
 
-test('abre con la búsqueda de la URL si viene el parámetro q', () => {
-    renderCatalog('/catalogo?q=miel')
+test('abre con la búsqueda de la URL si viene el parámetro q', async () => {
+    await cargarCatalogo('/catalogo?q=miel')
 
     expect(screen.getByLabelText(/buscar productos/i)).toHaveValue('miel')
     expect(screen.getAllByRole('button', { name: /agregar.*al carrito/i })).toHaveLength(1)
 })
 
-test('ignora una categoría desconocida que llegue en la URL', () => {
+test('ignora una categoría desconocida que llegue en la URL', async () => {
     /* Con state local esto no podría pasar; con URL hay que tolerar basura. */
-    renderCatalog('/catalogo?categoria=Categoria%20Inventada')
+    await cargarCatalogo('/catalogo?categoria=Categoria%20Inventada')
 
     expect(screen.queryAllByRole('button', { name: /agregar.*al carrito/i })).toHaveLength(0)
     expect(screen.getByText(/no hay productos en esta categoría/i)).toBeInTheDocument()
@@ -207,7 +220,7 @@ test('ignora una categoría desconocida que llegue en la URL', () => {
 test('el botón de categorías lleva a la vista de categorías', async () => {
     const user = userEvent.setup()
 
-    renderCatalog()
+    await cargarCatalogo()
 
     /* React-Bootstrap le pone role="button" al <a> que renderiza Button as={Link},
        así que el rol accesible es button y no link. */
@@ -219,9 +232,43 @@ test('el botón de categorías lleva a la vista de categorías', async () => {
 test('el botón de ofertas lleva a la vista de ofertas', async () => {
     const user = userEvent.setup()
 
-    renderCatalog()
+    await cargarCatalogo()
 
     await user.click(screen.getByRole('button', { name: /ver ofertas/i }))
 
     expect(screen.getByRole('heading', { name: /pantalla de ofertas/i })).toBeInTheDocument()
+})
+
+// t02: si la api falla se ve el error y no productos falsos
+test('T02: si la API falla muestra error, no productos ni catálogo vacío', async () => {
+    getProducts.mockRejectedValueOnce(new Error('API caída'))
+
+    renderCatalog()
+
+    expect(await screen.findByRole('alert')).toHaveTextContent(/no pudimos cargar el catálogo/i)
+    expect(screen.queryAllByRole('button', { name: /agregar.*al carrito/i })).toHaveLength(0)
+    expect(screen.queryByText(/no hay productos/i)).not.toBeInTheDocument()
+    expect(screen.queryByText(/por ahora no hay productos/i)).not.toBeInTheDocument()
+})
+
+// el boton reintentar vuelve a pedir el catalogo
+test('reintentar vuelve a pedir el catálogo', async () => {
+    const user = userEvent.setup()
+
+    getProducts.mockRejectedValueOnce(new Error('API caída'))
+    renderCatalog()
+
+    await user.click(await screen.findByRole('button', { name: /reintentar/i }))
+
+    expect(await screen.findAllByRole('button', { name: /agregar.*al carrito/i })).toHaveLength(7)
+})
+
+// catalogo vacio real distinto de un error
+test('un catálogo realmente vacío se distingue del error', async () => {
+    getProducts.mockResolvedValueOnce([])
+
+    await cargarCatalogo()
+
+    expect(screen.getByText(/por ahora no hay productos en el catálogo/i)).toBeInTheDocument()
+    expect(screen.queryByRole('alert')).not.toBeInTheDocument()
 })

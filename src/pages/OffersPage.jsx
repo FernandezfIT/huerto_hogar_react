@@ -8,13 +8,25 @@
 
 import { Alert } from 'react-bootstrap'
 import ProductList from '../components/ProductList'
-import { products } from '../data/products'
+import CatalogStatus from '../components/CatalogStatus'
 import { useCart } from '../hooks/useCart'
+import { useCatalog } from '../hooks/useCatalog'
 import { discountPercent, getOffers } from '../utils/catalog'
 import { formatCurrency } from '../utils/formatCurrency'
 
 function OffersPage() {
     const { addItem } = useCart()
+    const { products, status, reload } = useCatalog()
+
+    // mientras carga o si hay error no se dibuja el catalogo
+    if (status !== 'success') {
+        return (
+            <section className="py-4">
+                <h1 className="h3 mb-2">Ofertas de la semana</h1>
+                <CatalogStatus status={status} onRetry={reload} />
+            </section>
+        )
+    }
 
     const ofertas = getOffers(products)
 

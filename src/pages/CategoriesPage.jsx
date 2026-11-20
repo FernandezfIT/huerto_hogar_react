@@ -1,22 +1,35 @@
 /*
   CategoriesPage es la vista de /categorias.
 
-  Muestra la descripción de cada categoría, un dato que estaba escrito en
-  data/categories.js pero que ninguna vista renderizaba hasta ahora.
+  Muestra la descripción de cada categoría con los metadatos que entrega la API.
 
-  Usa categoriesWithProducts de utils/catalog en vez de leer categories.js
-  directo, por la misma razón que usa el filtro del catálogo: la vista se
+  Usa categoriesWithProducts de utils/catalog con los datos de useCatalog,
+  por la misma razón que usa el filtro del catálogo: la vista se
   deriva de los productos que existen. Por eso "Productos Lácteos", que viene
   del enunciado pero quedó sin productos, no aparece acá.
 */
 
 import { Badge, Card, Col, Row } from 'react-bootstrap'
 import { Link } from 'react-router-dom'
+import CatalogStatus from '../components/CatalogStatus'
+import { useCatalog } from '../hooks/useCatalog'
 import { countByCategory, categoriesWithProducts } from '../utils/catalog'
-import { products } from '../data/products'
 
 function CategoriesPage() {
-    const categorias = categoriesWithProducts(products)
+    // datos del catalogo que vienen de la api
+    const { products, categories, status, reload } = useCatalog()
+
+    // mientras carga o si hay error no se dibuja el catalogo
+    if (status !== 'success') {
+        return (
+            <section className="py-4">
+                <h1 className="h3 mb-2">Categorías</h1>
+                <CatalogStatus status={status} onRetry={reload} />
+            </section>
+        )
+    }
+
+    const categorias = categoriesWithProducts(products, categories)
     const conteos = countByCategory(products)
 
     return (
